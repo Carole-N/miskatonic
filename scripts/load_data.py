@@ -5,6 +5,8 @@ import os
 from dotenv import load_dotenv
 from getpass import getpass
 
+# Commentaire by gpt, revu par C.G.
+
 # Chargement des variables d'environnement depuis le fichier .env
 load_dotenv()
 
