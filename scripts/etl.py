@@ -46,10 +46,12 @@ def transform_data(donnees_brutes: Dict[str, pd.DataFrame]) -> Dict[str, pd.Data
         return {}
 
     # -------------------------------
-    # Nettoyage de la colonne responseD
+    # Nettoyage de la colonne responseC et responseD
+    # On remplace None, "null" et "NULL" par un texte par défaut
     # -------------------------------
+    if "responseC" in df.columns:
+        df["responseC"] = df["responseC"].replace([None, "null", "NULL"], "C Balo")
     if "responseD" in df.columns:
-        # On remplace None, "null" et "NULL" par un texte par défaut
         df["responseD"] = df["responseD"].replace([None, "null", "NULL"], "La réponse D")
 
     # -------------------------------
