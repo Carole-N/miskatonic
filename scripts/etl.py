@@ -29,7 +29,7 @@ def extract_data() -> Dict[str, pd.DataFrame]:
 # -------------------------------
 # 2) Transformation des données
 # -------------------------------
-def transformer_donnees(donnees_brutes: Dict[str, pd.DataFrame]) -> Dict[str, pd.DataFrame]:
+def transform_data(donnees_brutes: Dict[str, pd.DataFrame]) -> Dict[str, pd.DataFrame]:
     """
     Fonction qui nettoie et transforme les données brutes.
     - Remplace les valeurs nulles dans la colonne responseD
@@ -90,6 +90,10 @@ def transformer_donnees(donnees_brutes: Dict[str, pd.DataFrame]) -> Dict[str, pd
     df_final = df[colonnes_finales]
 
     # -------------------------------
+    # Ajout d'une colonne id en position 0 autoIncr
+    # -------------------------------
+    df_final.insert(0, "id", range(1, len(df_final) + 1))
+    # -------------------------------
     # Export du résultat en JSON
     # -------------------------------
     output_path = "./data/questions.json"
@@ -107,4 +111,4 @@ if __name__=="__main__":
     dfs = extract_data()
 
     # Étape 2 : Transformation
-    dfs_transformed = transformer_donnees(dfs)
+    dfs_transformed = transform_data(dfs)
