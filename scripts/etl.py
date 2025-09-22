@@ -1,8 +1,8 @@
 import pandas as pd
-# from pathlib import Path
 from typing import Dict
 
 # Commentaire by gpt, revu par C.G.
+
 
 # -------------------------------
 # 1) Extraction des données
@@ -12,13 +12,11 @@ def extract_data() -> Dict[str, pd.DataFrame]:
     Fonction qui charge les données brutes depuis un fichier CSV.
     Retourne un dictionnaire avec un DataFrame.
     """
-    chemin_csv = "./data/questions.csv"   # chemin vers le fichier source, ne pas oublier de bien ce placer (cd miskatonic)
+    chemin_csv = "./data/questions.csv"  # chemin vers le fichier source, ne pas oublier de bien ce placer (cd miskatonic)
     dataframes = {}
     try:
         # Lecture du CSV dans un DataFrame pandas
-        dataframes = {
-            "csv": pd.read_csv(chemin_csv)
-        }
+        dataframes = {"csv": pd.read_csv(chemin_csv)}
         print("Dataframes OK.")
     except Exception as e:
         # Si une erreur survient, on l'affiche
@@ -37,8 +35,8 @@ def transform_data(donnees_brutes: Dict[str, pd.DataFrame]) -> Dict[str, pd.Data
     - Sélectionne les colonnes utiles
     - Exporte le résultat en JSON
     """
-    print("Exécution de : Transform") 
-    
+    print("Exécution de : Transform")
+
     # Récupération du DataFrame
     df = donnees_brutes.get("csv")
     if df is None:
@@ -46,13 +44,19 @@ def transform_data(donnees_brutes: Dict[str, pd.DataFrame]) -> Dict[str, pd.Data
         return {}
 
     # -------------------------------
-    # Nettoyage de la colonne responseC et responseD
+    # Nettoyage de la colonne correct, responseC et responseD
     # On remplace None, "null" et "NULL" par un texte par défaut
+    # Force str pour correct sinon pandas râle, on enleve les espaces au début et fin et on remplace les " " au milieu par des virgules
     # -------------------------------
+    if "correct" in df.columns:
+        df["correct"] = df["correct"].str.strip()
+        df["correct"] = df["correct"].str.replace(r"\s+", ",", regex=True)
     if "responseC" in df.columns:
         df["responseC"] = df["responseC"].replace([None, "null", "NULL"], "C Balo")
     if "responseD" in df.columns:
-        df["responseD"] = df["responseD"].replace([None, "null", "NULL"], "La réponse D")
+        df["responseD"] = df["responseD"].replace(
+            [None, "null", "NULL"], "La réponse D"
+        )
 
     # -------------------------------
     # Création d'une nouvelle colonne avec le texte des bonnes réponses
@@ -65,29 +69,41 @@ def transform_data(donnees_brutes: Dict[str, pd.DataFrame]) -> Dict[str, pd.Data
         """
         if pd.isna(row["correct"]):
             return []
-        
         # On sépare les lettres de bonnes réponses (ex: "B,C" -> ["B", "C"])
         bonnes_lettres = [x.strip() for x in str(row["correct"]).split(",")]
         bonnes_reponses = []
-        
+
         # Pour chaque lettre, on récupère le texte correspondant
         for lettre in bonnes_lettres:
             col = f"response{lettre}"  # ex: "responseA"
             if col in row and pd.notna(row[col]):
                 bonnes_reponses.append(row[col])
-        
+
         return bonnes_reponses
 
     # Application de la fonction à toutes les lignes
     df["good_answers_texte"] = df.apply(extraire_bonnes_reponses, axis=1)
 
+    df["responses"] = df.apply(
+        lambda row: [
+            row["responseA"],
+            row["responseB"],
+            row["responseC"],
+            row["responseD"],
+        ],
+        axis=1,
+    )
     # -------------------------------
     # Sélection des colonnes finales
     # -------------------------------
     colonnes_finales = [
-        "question", "subject", "use", "correct",
-        "responseA", "responseB", "responseC", "responseD",
-        "good_answers_texte", "remark"
+        "question",
+        "subject",
+        "use",
+        "correct",
+        "responses",
+        "good_answers_texte",
+        "remark",
     ]
     df_final = df[colonnes_finales]
 
@@ -108,7 +124,7 @@ def transform_data(donnees_brutes: Dict[str, pd.DataFrame]) -> Dict[str, pd.Data
 # -------------------------------
 # 3) Point d'entrée du script
 # -------------------------------
-if __name__=="__main__":
+if __name__ == "__main__":
     # Étape 1 : Extraction
     dfs = extract_data()
 
