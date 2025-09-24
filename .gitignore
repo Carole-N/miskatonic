@@ -1,3 +1,5 @@
 .mkvenv/
 .env
 data/
+docker-compose.yml
+Dockerfile

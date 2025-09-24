@@ -1,5 +1,4 @@
 import sqlite3
-from datetime import datetime
 from hashlib import sha256
 import os
 from dotenv import load_dotenv
@@ -11,7 +10,7 @@ from getpass import getpass
 load_dotenv()
 
 # Chemin vers la base de données SQLite
-DB_PATH = "../data/Miskatonik_users.db"
+DB_PATH = "./data/miskatonic_users.db"
 
 def admin_login():
     """
@@ -79,9 +78,9 @@ def add_user(cursor):
     try:
         cursor.execute("""
             INSERT INTO Users 
-            (user_name, user_date_create, password_hash, role_id)
-            VALUES (?, ?, ?, ?)
-        """, (user_name, datetime.now().strftime("%Y-%m-%d %H:%M:%S"), password_hash, role_id))
+            (user_name, password_hash, role_id)
+            VALUES (?, ?, ?)
+        """, (user_name, password_hash, role_id))
         print(f"Utilisateur '{user_name}' ajouté avec succès.")
     except Exception as e:
         print("Erreur lors de l'insertion de l'utilisateur :", e)

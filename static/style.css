@@ -1,0 +1,144 @@
+@keyframes shimmer {
+  to {
+    background-position-x: 0%
+  }
+}
+
+body {
+  background: linear-gradient(-45deg, #1cdbd9 40%, #d335de47 50%, #1cdbd9 60%);
+  background-size: 400%;
+  background-position-x: 100%;
+  animation: shimmer 10s infinite linear;
+}
+
+.mainBox {
+  display: flex;
+  justify-content: space-around;
+  margin: 2em;
+}
+
+.mainBoxStudents,
+.mainBoxTeacher,
+.error {
+  flex: 1;
+  margin: 0 1em;
+  border-radius: 1em;
+  display: flex;
+  justify-content: space-around;
+}
+
+.mainBoxStudents {
+  background-color: aqua;
+}
+
+.mainBoxTeacher {
+  background-color: rgb(255, 247, 0);
+}
+
+.shadow {
+  overflow: hidden;
+}
+
+.credentials {
+  margin: 5%;
+}
+
+h1 {
+  text-align: center;
+}
+
+.blazon {
+  text-align: center;
+}
+
+#blaz {
+  border-radius: 10em;
+  height: 20%;
+  width: 20%;
+}
+
+.submit {
+  margin: 1em;
+}
+
+.alignbtn {
+  text-align: center;
+}
+
+footer {
+  background-color: red;
+  text-align: center;
+  border-radius: 2em;
+}
+
+nav {
+  width: 100%;
+  background-color: bisque;
+  margin: 0 auto;
+  position: sticky;
+}
+
+nav ul {
+  list-style-type: none;
+}
+
+nav ul::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+nav ul li {
+  float: left;
+  text-align: center;
+  position: relative;
+}
+
+nav a:hover {
+  color: red;
+  border-bottom: 2px gold solid;
+}
+
+.under {
+  display: none;
+}
+
+.under li {
+  float: none;
+  text-align: left;
+  width: 100%;
+  z-index: 1000;
+}
+
+.under a:hover{
+  border-bottom: none ;
+}
+
+nav>ul li:hover .under {
+  display: block;
+}
+
+.roll {
+  content: ▼;
+  font-size: 12px;
+}
+
+#warning {
+  height: 50%;
+  width: 50%;
+}
+
+.error {
+  text-align: center;
+  background-color: rgb(177, 255, 251);
+  border-radius: 2em;
+  margin-left: 35%;
+  margin-right: 35%;
+  padding: 1em;
+  box-shadow: 0px 0px 10px #232931;
+}
+
+.registerbox {
+  background-color: #9a9a9a;
+  text-align: center;
+}

@@ -7,7 +7,7 @@ def create_db():
     try: 
         # Connexion (ou création si elle n'existe pas) à une base de données SQLite
         # Le fichier sera enregistré à l'emplacement ./data/Miskatonik_users.db
-        con = sqlite3.connect("./data/Miskatonik_users.db")
+        con = sqlite3.connect("../data/miskatonic_users.db")
         cur = con.cursor()  # Création d'un curseur pour exécuter les requêtes SQL
     except Exception as e:
         # Gestion d'erreur si la connexion échoue
@@ -33,7 +33,6 @@ def create_db():
             CREATE TABLE IF NOT EXISTS Users (
                 user_id INTEGER PRIMARY KEY AUTOINCREMENT,  -- Identifiant unique auto-incrémenté
                 user_name TEXT NOT NULL,                    -- Nom de l’utilisateur (obligatoire)
-                user_date_create TEXT NOT NULL,             -- Date de création du compte (obligatoire)
                 password_hash TEXT NOT NULL,                -- Mot de passe chiffré (obligatoire)
                 role_id INTEGER NOT NULL,                   -- Clé étrangère : rôle de l’utilisateur
                 FOREIGN KEY (role_id) REFERENCES Roles(role_id)  -- Relation avec la table Roles

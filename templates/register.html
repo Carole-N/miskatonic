@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../style.css">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" />
+    <title>Miskatonic</title>
+</head>
+
+<body>
+    <div>
+        <h1>Welcome</h1>
+        <h2>Students can register here</h2>
+
+    </div>
+    <div class="registerbox">
+        <form method="POST" action="{{ url_for('register') }}">
+            <label for="user">Username</label><br>
+            <input type="text" id="user" name="user" placeholder="**********"><br>
+            <label for="pwd">Password</label><br>
+            <input type="password" id="pwd" name="pwd" placeholder="**********"><br>
+            <label for="pwd2">Password again</label><br>
+            <input type="password" id="pwd2" name="pwd2" placeholder="**********"><br>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+    <div class="error">
+        {% if message %}
+        <p style="color:red;">{{ message }}</p>
+        <img id="warning" src="{{ url_for('static', filename='images/warning.png') }}" alt="blazon"></img>
+        {% endif %}
+    </div>
+</body>
+
+</html>
