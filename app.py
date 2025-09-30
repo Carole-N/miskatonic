@@ -121,6 +121,15 @@ def logout():
     # Redirige vers la page d'accueil publique
     return redirect(url_for('index'))
 
+@app.route('/quizz')
+def quizz():
+    # Vérifie si l'utilisateur est connecté en regardant la session
+    if 'user' not in session:
+        # S'il n'est pas connecté, redirige vers la page de connexion
+        return redirect(url_for('login'))
+    # Si l'utilisateur est connecté, affiche la page d'accueil protégée
+    return render_template('quizz.html', user=session['user'])
+
 if __name__ == "__main__":
     # Lancement de l'application Flask en mode debug
     app.run(debug=True)

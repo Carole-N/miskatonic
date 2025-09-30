@@ -19,7 +19,8 @@ body {
 
 .mainBoxStudents,
 .mainBoxTeacher,
-.error {
+.error, 
+.quizzbox {
   flex: 1;
   margin: 0 1em;
   border-radius: 1em;
@@ -141,4 +142,8 @@ nav>ul li:hover .under {
 .registerbox {
   background-color: #9a9a9a;
   text-align: center;
+}
+
+.quizzbox {
+
 }
