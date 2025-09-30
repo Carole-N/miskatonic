@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" />
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
     <title>Quiz Results</title>
 </head>
 <body>
@@ -11,12 +12,12 @@
         <p>Welcome, {{ user }} | <a href="{{ url_for('home') }}">Home</a> | <a href="{{ url_for('logout') }}">Logout</a></p>
     </nav>
 
-    <div class="results-box">
-        <h2>Quizz Finished!</h2>
+    <div class="results_box">
+        <h2 id="quizzfinish">Quizz Finished!</h2>
         <h1 class="score">Your score: {{ score }} / {{ total }}</h1>
 
         {% for r in results %}
-        <div class="result-question">
+        <div class="result_question">
             <h3>{{ loop.index }}. {{ r.question['question'] }}</h3>
             <p><strong>Your answer:</strong> 
                 {% if r.selected %}{{ r.selected | join(', ') }}{% else %}No answer{% endif %}
@@ -29,6 +30,7 @@
 
         <a href="{{ url_for('quizz') }}"><button>Try Again</button></a>
         <a href="{{ url_for('home') }}"><button>Back to Home</button></a>
+        <script src="{{ url_for('static', filename='script.js') }}"></script>
     </div>
 </body>
 </html>

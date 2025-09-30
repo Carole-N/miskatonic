@@ -184,6 +184,14 @@ def submit_quizz():
 
     return render_template("results.html", user=session['user'], score=score, total=len(results), results=results)
 
+@app.route("/privacy")
+def privacy():
+    return render_template('privacy.html')
+
+@app.route('/favicon.ico')
+def favicon():
+    return redirect(url_for('static', filename='favicon.ico'))
+
 if __name__ == "__main__":
     # Lancement de l'application Flask en mode debug
     app.run(debug=True)

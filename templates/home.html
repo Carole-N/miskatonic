@@ -5,24 +5,92 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" />
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
     <title>Document</title>
 </head>
-<nav>
-    <ul>
-        <li class="roll">
-            <a href="#">Themes &ensp;</a>
-            <ul class="under">
-                <li><a href="#">Youpi</a></li>
-                <li><a href="#">l'école est finie</a></li>
-            </ul>
-        </li>
-    </ul>
-</nav>
 
 
 <body>
+    <nav>
+        <p>Welcome, {{ user }} | <a href="{{ url_for('home') }}">Home</a> | <a href="{{ url_for('logout') }}">Logout</a>
+        </p>
+    </nav>
     <button class="generatequizz">Generate quizz</button>
 
+    <div class="histoire">
+        </head>
+
+        <body>
+            <h1>L'Épopée Inattendue de Miskatonic</h1>
+
+            <h2>Chapitre I – Les Débuts Pénibles</h2>
+            <p>
+                Jadis, dans une petite vallée où même les nuages hésitaient à passer leurs vacances, naquit une
+                institution nommée <span class="highlight">Miskatonic</span>.
+                Elle n’était qu’une grange bancale avec trois tables, deux chaises et un tableau noir couvert de craie
+                et de désespoir.
+                Les premiers étudiants devaient apporter leurs propres craies, et parfois leurs propres fenêtres.
+                On raconte que l’hiver, les professeurs enseignaient en portant trois manteaux, tandis que les étudiants
+                révisaient en tapant des pieds pour ne pas geler sur place.
+            </p>
+            <blockquote>
+                « Nous n’avons ni chauffage, ni gloire, mais nous avons des questions. » – Premier slogan officiel de
+                Miskatonic.
+            </blockquote>
+
+            <h2>Chapitre II – La Révolution des Petits Pois</h2>
+            <p>
+                Tout changea le jour où un étudiant visionnaire, Éphrem Dubidon, lança une idée révolutionnaire :
+                <em>remplacer les jetons de quizz par des petits pois séchés</em>.
+                Ce fut un choc. Un séisme académique. Désormais, chaque bonne réponse valait un petit pois, et chaque
+                erreur valait la perte d’un petit pois.
+                L’économie interne de Miskatonic se transforma : des marchés parallèles virent le jour, des fortunes se
+                bâtirent en haricots verts,
+                et l’on vit même apparaître une bourse clandestine où l’indice principal, le <span
+                    class="highlight">PEA-40</span>, variait au gré des examens.
+            </p>
+            <p>
+                Certains étudiants amassèrent tant de petits pois qu’ils s’en firent des manteaux, des colliers, voire
+                des sceptres.
+                La révolution verte était en marche, et Miskatonic passa d’une école tremblotante à une <strong>capitale
+                    intellectuelle du légume sec</strong>.
+            </p>
+
+            <h2>Chapitre III – La Venue du Président</h2>
+            <p>
+                La renommée de Miskatonic attira bientôt l’attention des plus hautes sphères.
+                Un jour solennel, alors que l’université venait de terminer un gigantesque quiz de 14 heures non-stop
+                (record homologué par personne, mais applaudi par tous),
+                le Président en personne apparut. Il descendit d’un carrosse électrique aux dorures invraisemblables,
+                tenant dans sa main un petit pois sacré qu’il déclara être « l’emblème d’une nouvelle ère ».
+            </p>
+            <p>
+                Devant des milliers d’étudiants médusés, il prononça ces mots historiques :
+            </p>
+            <blockquote>
+                « Miskatonic, tu es plus qu’une université : tu es une question à laquelle le monde n’avait pas encore
+                pensé. »
+            </blockquote>
+            <p>
+                À partir de ce jour, Miskatonic fut reconnue comme la <strong>capitale mondiale des quizzs
+                    absurdes</strong>,
+                et son drapeau, orné de trois petits pois entrelacés, flotta fièrement au-dessus de ses toits de
+                briques.
+            </p>
+
+            <h2>Épilogue</h2>
+            <p>
+                Aujourd’hui encore, on raconte que chaque fois qu’un étudiant répond juste à une question, un petit pois
+                scintille dans le ciel.
+                Et si vous tendez l’oreille par une nuit claire, vous pourriez entendre la rumeur des anciens examens,
+                répétant à l’infini :
+                <em>« Quelle est la capitale de la Moldavie ? »</em>
+            </p>
+        </body>
+
+        </html>
+
+    </div>
 </body>
 
 </html>

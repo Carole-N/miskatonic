@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" />
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
 
     <title>Miskatonic</title>
 </head>
@@ -68,26 +69,7 @@
 
 <footer>
     <div>
-        <h2>Privacy policy</h2>
-        <p>
-            Oui, ma gâtée, RS4 gris nardo, bien sûr qu'ils m'ont raté (gros, bien sûr)<br>
-            Soleil dans la bulle, sur le Prado, Shifter pro' (Shifter pro')<br>
-            Contre-sens (ah), ma chérie, tu es à contre-sens<br>
-            Puta, où tu étais quand j'mettais des sept euros d'essence (hein)<br>
-            Tu veux nous faire la guerre (hein), par Dieu, c'est B (ah)<br>
-            Ça prend ton Audi, ça prend ta gadji, ça prend ta CB (eh, eh)<br>
-            Le téléphone bippe (brr), que tu prends la kew (ew)<br>
-            C'est Marseille, bébé (ah), sa mère un CDD (ah)<br>
-            Wesh alors, ma race, tranquille ou quoi (oh, mathafuck)<br>
-            Grimpe dans la tchop, j'fais 0 à 100 en 2 secondes 3<br>
-            Guitarisé, oh, AC/DC, oh, on s'croise, c'est sûr, tu es tétanisé<br>
-            J'ai passé la bague à Tchikita, deux mois après, j'l'ai déjà quitté (ah, ah)<br>
-            T'es un petit bâtard, j'suis un apache, j'suis un Diakité (eh)<br>
-            J'suis le capitaine (eh), j'vais les décapiter (eh)<br>
-            C'est pas la capitale (nan), c'est Marseille, bébé (pah, pah, pah)<br>
-            1.3, Audi Sport, j'passe la douane, les rapports<br>
-            Nique ta mère sur la Canebière, nique tes morts sur le Vieux-Port (Santé & Honneur)<br>
-        </p>
+        <a href="{{ url_for('privacy') }}">Privacy Policy</a>
     </div>
 </footer>
 
