@@ -83,8 +83,12 @@ def transform_data(donnees_brutes: Dict[str, pd.DataFrame]) -> Dict[str, pd.Data
 
     # Application de la fonction à toutes les lignes
     df["good_answers_texte"] = df.apply(extraire_bonnes_reponses, axis=1)
+    
+    # filter out records using dropna method
+    df_filtered = df[df['correct'].notna()].copy()  # <-- important: copy()
 
-    df["responses"] = df.apply(
+    # Crée la colonne responses directement dans df_filtered
+    df_filtered["responses"] = df_filtered.apply(
         lambda row: [
             row["responseA"],
             row["responseB"],
@@ -92,7 +96,7 @@ def transform_data(donnees_brutes: Dict[str, pd.DataFrame]) -> Dict[str, pd.Data
             row["responseD"],
         ],
         axis=1,
-    )
+)
     # -------------------------------
     # Sélection des colonnes finales
     # -------------------------------
@@ -105,7 +109,7 @@ def transform_data(donnees_brutes: Dict[str, pd.DataFrame]) -> Dict[str, pd.Data
         "good_answers_texte",
         "remark",
     ]
-    df_final = df[colonnes_finales]
+    df_final = df_filtered[colonnes_finales].copy()
 
     # -------------------------------
     # Ajout d'une colonne id en position 0 autoIncr
