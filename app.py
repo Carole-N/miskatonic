@@ -1,6 +1,7 @@
 from flask import Flask, redirect, url_for, request, render_template, session
 import sqlite3
 from hashlib import sha256
+from dto.connexion import Connexion
 
 # Nom de la base de données SQLite
 DATABASE = 'data/miskatonic_users.db'
@@ -123,12 +124,46 @@ def logout():
 
 @app.route('/quizz')
 def quizz():
-    # Vérifie si l'utilisateur est connecté en regardant la session
     if 'user' not in session:
-        # S'il n'est pas connecté, redirige vers la page de connexion
         return redirect(url_for('login'))
-    # Si l'utilisateur est connecté, affiche la page d'accueil protégée
-    return render_template('quizz.html', user=session['user'])
+
+    Connexion.connect()
+    questions = Connexion.get_all_questions()
+    Connexion.disconnect()
+
+    return render_template(
+        'quizz.html',
+        user=session['user'],
+        questions=questions
+    )
+
+
+@app.route("/question/<int:_id>")
+def question_detail(_id):
+    question = next((q for q in Connexion.get_question_by_id if q["_id"] == _id), None)
+    if not question:
+        return "Question not found", 404
+    return render_template("question_detail.html", question=question)
+
+@app.route("/submit/<string:_id>", methods=["POST"])
+def submit_answer(_id):
+    Connexion.connect()
+    question = Connexion.get_question_by_id(_id)
+    Connexion.disconnect()
+
+    if not question:
+        return "Question not found", 404
+
+    selected = request.form.getlist("response")
+
+    correct = set(selected) == set(question.get("good_answers_texte", []))
+
+    if correct:
+        return f" Correct! {', '.join(question['good_answers_texte'])} is the right answer."
+    else:
+        return f" Incorrect. The correct answer is {', '.join(question['good_answers_texte'])}."
+
+    
 
 if __name__ == "__main__":
     # Lancement de l'application Flask en mode debug
