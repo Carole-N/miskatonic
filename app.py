@@ -131,16 +131,16 @@ def quizz():
 
     Connexion.connect()
     all_questions = Connexion.get_all_questions()
+    questions = random.sample(all_questions, min(len(all_questions), 20))
+    question_ids = [str(q['_id']) for q in questions]
+    
+    quizz_id = Connexion.add_quizz(session['user'], question_ids)
+    session['quizz_questions'] = question_ids
+    session['quizz_id'] = str(quizz_id)
+
     Connexion.disconnect()
 
-    questions = random.sample(all_questions, min(len(all_questions), 20))
-    session['quizz_questions'] = [str(q['_id']) for q in questions]
-
-    return render_template(
-        'quizz.html',
-        user=session['user'],
-        questions=questions 
-    )
+    return render_template('quizz.html', user=session['user'], questions=questions)
     
 @app.route("/question/<int:_id>")
 def question_detail(_id):

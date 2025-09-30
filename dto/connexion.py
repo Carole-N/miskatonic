@@ -26,5 +26,12 @@ class Connexion:
     def delete_question(cls, question_id):
         cls.collection.delete_one({"_id":ObjectId(question_id)})
     @classmethod
+    def add_quizz(cls, user, question_ids):
+        quizz_data = {
+            "user": user,
+            "questions": [ObjectId(q_id) for q_id in question_ids]
+        }
+        return cls.db['quizz'].insert_one(quizz_data).inserted_id
+    @classmethod
     def disconnect(cls):
         cls.client.close()
