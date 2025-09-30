@@ -2,6 +2,8 @@ from flask import Flask, redirect, url_for, request, render_template, session
 import sqlite3
 from hashlib import sha256
 from dto.connexion import Connexion
+from bson import ObjectId
+import random
 
 # Nom de la base de données SQLite
 DATABASE = 'data/miskatonic_users.db'
@@ -128,16 +130,18 @@ def quizz():
         return redirect(url_for('login'))
 
     Connexion.connect()
-    questions = Connexion.get_all_questions()
+    all_questions = Connexion.get_all_questions()
     Connexion.disconnect()
+
+    questions = random.sample(all_questions, min(len(all_questions), 20))
+    session['quizz_questions'] = [str(q['_id']) for q in questions]
 
     return render_template(
         'quizz.html',
         user=session['user'],
-        questions=questions
+        questions=questions 
     )
-
-
+    
 @app.route("/question/<int:_id>")
 def question_detail(_id):
     question = next((q for q in Connexion.get_question_by_id if q["_id"] == _id), None)
@@ -145,26 +149,43 @@ def question_detail(_id):
         return "Question not found", 404
     return render_template("question_detail.html", question=question)
 
-@app.route("/submit/<string:_id>", methods=["POST"])
-def submit_answer(_id):
+@app.route("/submit_quizz", methods=["POST"])
+def submit_quizz():
+
+    if 'quizz_questions' not in session:
+        return redirect(url_for('quizz'))
+
+    score = 0
     Connexion.connect()
-    question = Connexion.get_question_by_id(_id)
+    results = []
+
+    for q_id in session['quizz_questions']:
+        question = Connexion.get_question_by_id(ObjectId(q_id))
+        if not question:
+            continue
+
+        selected = request.form.getlist(f"response_{q_id}")
+        correct_answers = question.get("good_answers_texte", [])
+
+        correct = set(selected) == set(correct_answers)
+        if correct:
+            score += 1
+
+        results.append({
+            "question": question,
+            "selected": selected,
+            "correct": correct,
+            "correct_answers": correct_answers
+        })
+
     Connexion.disconnect()
 
-    if not question:
-        return "Question not found", 404
+    session.pop('quizz_questions', None)
 
-    selected = request.form.getlist("response")
-
-    correct = set(selected) == set(question.get("good_answers_texte", []))
-
-    if correct:
-        return f" Correct! {', '.join(question['good_answers_texte'])} is the right answer."
-    else:
-        return f" Incorrect. The correct answer is {', '.join(question['good_answers_texte'])}."
-
-    
+    return render_template("results.html", user=session['user'], score=score, total=len(results), results=results)
 
 if __name__ == "__main__":
     # Lancement de l'application Flask en mode debug
     app.run(debug=True)
+
+

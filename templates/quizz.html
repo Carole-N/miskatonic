@@ -1,40 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" />
     <title>Quiz</title>
 </head>
-
 <body>
-    <nav>
-    </nav>
+    <nav></nav>
 
     <div class="quizzbox">
-        <div class="questions">
-            <ul>
-                {% for question in questions %}
-                <li>
-                    <div class="boate">
-                        <h2>
-                            <p>
-                                {{ question['question'] }}
-                            </p>
-                        </h2>
-                        <form action="{{ url_for('submit_answer', _id=question['_id']) }}" method="post">
-                            {% for response in question['responses'] %}
-                            <input type="checkbox" name="response" value="{{ response }}"> {{ response }} <br>
-                            {% endfor %}
-                            <button type="submit">Submit</button>
-                        </form>
-                    </div>
-                </li>
+        <form method="POST" action="{{ url_for('submit_quizz') }}">
+            {% for question in questions %}
+            <div class="question">
+                <h3>{{ loop.index }}. {{ question['question'] }}</h3>
+                {% for option in question['responses'] %}
+                <label>
+                    <input type="checkbox" name="response_{{ question['_id'] }}" value="{{ responses }}">
+                    {{ option }}
+                </label><br>
                 {% endfor %}
-            </ul>
-        </div>
+            </div>
+            <hr>
+            {% endfor %}
+            <button type="submit">Submit All Answers</button>
+        </form>
     </div>
 </body>
-
 </html>

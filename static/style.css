@@ -151,3 +151,8 @@ nav>ul li:hover .under {
 .boate{
   background-color: brown;
 }
+
+.score{
+  background-color: greenyellow;
+  text-align: center;
+}
