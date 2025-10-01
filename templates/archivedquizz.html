@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Archived quizz</title>
+</head>
+
+<body>
+    <h1>Quiz archivés</h1>
+    <ul>
+        {% for quiz in quizzes %}
+        <li>
+            Quiz ID : {{ quiz._id }} <br>
+            Utilisateur : {{ quiz.user }} <br>
+            Questions :
+            <ul>
+                {% for q_id in quiz.questions %}
+                <li>{{ q_id }}</li>
+                {% endfor %}
+            </ul>
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+<footer>
+    <div>
+        <a href="{{ url_for('privacy') }}">Privacy Policy</a>
+    </div>
+</footer>
+
+</html>

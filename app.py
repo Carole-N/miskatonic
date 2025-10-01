@@ -15,6 +15,11 @@ app = Flask(__name__)
 # Clé secrète nécessaire pour utiliser les sessions (à changer en production)
 app.secret_key = "change_me_to_a_secure_random_key"
 
+# Connexion à MongoDB
+client = MongoClient("mongodb://isen:isen@localhost:27017/admin")
+db = client["miskatonic"]
+questions_collection = db["questions"]
+
 # ---------------
 # Partie Website
 # ---------------
@@ -207,12 +212,6 @@ def submit_quizz():
     )
 
 
-# Connexion à MongoDB
-client = MongoClient("mongodb://isen:isen@localhost:27017/admin")
-db = client["miskatonic"]
-questions_collection = db["questions"]
-
-
 @app.route("/addquestion", methods=["GET", "POST"])
 def addquestion():
     if request.method == "POST":
@@ -256,16 +255,22 @@ def addquestion():
             "good_answers_texte": good_answer_texte,  # les textes
             "remark": remark,
         }
-
-        # Insertion
         questions_collection.insert_one(new_question)
 
         return f"Question ajoutée avec succès !<br>Correct = {correct_str}<br>Bonne(s) réponses = {good_answer_texte}"
-    
+
     subjects = questions_collection.distinct("subject")
     uses = questions_collection.distinct("use")
-    
+
     return render_template("form.html", subjects=subjects, uses=uses)
+
+
+@app.route("/archivedquizz")
+def archivedquizz():
+    Connexion.connect()
+    quizzes = list(Connexion.get_quizz_archived())
+    Connexion.disconnect()
+    return render_template("archivedquizz.html", quizzes=quizzes)
 
 
 @app.route("/privacy")
