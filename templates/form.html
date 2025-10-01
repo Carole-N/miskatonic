@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" />
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+    <title>Adding a question</title>
+</head>
+
+<body>
+    <form method="POST" action="{{ url_for('addquestion') }}">
+        <label for="question">Question :</label><br>
+        <input type="text" id="question" name="question"><br>
+        <label for="subject">Subject :</label><br>
+        <select id="subject" name="subject" onchange="toggleInput('subject')">
+            <option value="">--Choisir un sujet--</option>
+            {% for s in subjects %}
+            <option value="{{ s }}">{{ s }}</option>
+            {% endfor %}
+            <option value="Autre">Autre...</option>
+        </select>
+        <input type="text" id="subject_input" name="subject_input" style="display:none;"
+            placeholder="Nouveau sujet"><br><br>
+        <label for="use">Use :</label><br>
+        <select id="use" name="use" onchange="toggleInput('use')">
+            <option value="">--Choisir un usage--</option>
+            {% for u in uses %}
+            <option value="{{ u }}">{{ u }}</option>
+            {% endfor %}
+            <option value="Autre">Autre...</option>
+        </select>
+        <input type="text" id="use_input" name="use_input" style="display:none;" placeholder="Nouvel usage"><br><br>
+
+
+        <label for="correct">Correct :</label><br>
+        <label for="correcta">A</label><br>
+        <input type="checkbox" id="correcta" name="correcta"><br>
+        <label for="correctb">B</label><br>
+        <input type="checkbox" id="correctb" name="correctb"><br>
+        <label for="correctc">C</label><br>
+        <input type="checkbox" id="correctc" name="correctc"><br>
+        <label for="correctd">D</label><br>
+        <input type="checkbox" id="correctd" name="correctd"><br>
+
+
+        <label for="use">Answers :</label><br>
+        <label for="answera">A</label><br>
+        <input type="text" id="answera" name="answera"><br>
+        <label for="answerb">B</label><br>
+        <input type="text" id="answerb" name="answerb"><br>
+        <label for="answerc">C</label><br>
+        <input type="text" id="answerc" name="answerc"><br>
+        <label for="answerd">D</label><br>
+        <input type="text" id="answerd" name="answerd"><br>
+
+        <label for="remark">Remark:</label><br>
+        <input type="text" id="remark" name="remark"><br>
+
+        <button type="submit">Submit</button>
+    </form>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+
+</html>

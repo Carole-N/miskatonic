@@ -4,9 +4,10 @@ from hashlib import sha256
 from dto.connexion import Connexion
 from bson import ObjectId
 import random
+from pymongo import MongoClient
 
 # Nom de la base de données SQLite
-DATABASE = 'data/miskatonic_users.db'
+DATABASE = "data/miskatonic_users.db"
 
 # Création de l'application Flask
 app = Flask(__name__)
@@ -14,20 +15,26 @@ app = Flask(__name__)
 # Clé secrète nécessaire pour utiliser les sessions (à changer en production)
 app.secret_key = "change_me_to_a_secure_random_key"
 
-@app.route('/')
+# ---------------
+# Partie Website
+# ---------------
+
+
+@app.route("/")
 def index():
     # Page d'accueil, rend simplement le template index.html
-    return render_template('index.html')
+    return render_template("index.html")
 
-@app.route('/login', methods=['GET', 'POST'])
+
+@app.route("/login", methods=["GET", "POST"])
 def login():
     # Message affiché en cas d'erreur ou de succès
-    message = ''
+    message = ""
     # Si l'utilisateur envoie un formulaire (méthode POST)
-    if request.method == 'POST':
+    if request.method == "POST":
         # Récupération du nom d'utilisateur et du mot de passe
-        user = request.form.get('user')
-        pwd = request.form.get('pwd')
+        user = request.form.get("user")
+        pwd = request.form.get("pwd")
         # Hachage du mot de passe avec SHA-256
         pwd_hash = sha256(pwd.encode("utf-8")).hexdigest()
 
@@ -43,10 +50,10 @@ def login():
                 # Si un utilisateur est trouvé
                 if result and result[0] > 0:
                     # On sauvegarde l'utilisateur dans la session
-                    session['user'] = user
+                    session["user"] = user
                     print("Welcome")
                     # Redirige vers la page d'accueil protégée
-                    return redirect(url_for('home'))
+                    return redirect(url_for("home"))
                 else:
                     # Aucun utilisateur correspondant
                     message = "Unknown username or password."
@@ -55,22 +62,23 @@ def login():
             print("Erreur lors de l'appel :", e)
             message = "Database error"
     # Affiche la page de login avec un éventuel message d'erreur
-    return render_template('login.html', message=message)
+    return render_template("login.html", message=message)
 
-@app.route('/register', methods=['GET', 'POST'])
+
+@app.route("/register", methods=["GET", "POST"])
 def register():
     # Message affiché pour informer l'utilisateur
     message = ""
-    if request.method == 'POST':
+    if request.method == "POST":
         # Récupération des champs du formulaire
-        user = request.form['user']
-        password = request.form['pwd']
-        password2 = request.form['pwd2']
+        user = request.form["user"]
+        password = request.form["pwd"]
+        password2 = request.form["pwd2"]
 
         # Vérifie si les deux mots de passe correspondent
         if password != password2:
             message = "Passwords do not match"
-            return render_template('register.html', message=message)
+            return render_template("register.html", message=message)
 
         # Hachage du mot de passe avant insertion
         password_hash = sha256(password.encode("utf-8")).hexdigest()
@@ -81,17 +89,19 @@ def register():
                 cursor = conn.cursor()
 
                 # Vérifie si l'utilisateur existe déjà
-                cursor.execute("SELECT COUNT(*) FROM Users WHERE user_name = ?", (user,))
+                cursor.execute(
+                    "SELECT COUNT(*) FROM Users WHERE user_name = ?", (user,)
+                )
                 result = cursor.fetchone()
                 if result and result[0] > 0:
                     # Nom d'utilisateur déjà pris
                     message = "Username already taken"
-                    return render_template('register.html', message=message)
+                    return render_template("register.html", message=message)
 
                 # Insère le nouvel utilisateur dans la base
                 cursor.execute(
                     "INSERT INTO Users (user_name, password_hash, role_id) VALUES (?, ?, 3)",
-                    (user, password_hash)
+                    (user, password_hash),
                 )
                 conn.commit()
 
@@ -99,49 +109,53 @@ def register():
             # Gestion d'une erreur d'insertion en base
             print("Erreur lors de l'insertion :", e)
             message = "Database error"
-            return render_template('register.html', message=message)
+            return render_template("register.html", message=message)
 
         # Si l'inscription réussit, affiche la page de connexion
         message = "Registration successful! Please login."
-        return render_template('login.html', message=message)
+        return render_template("login.html", message=message)
 
     # Affiche la page d'inscription pour une requête GET
-    return render_template('register.html', message=message)
+    return render_template("register.html", message=message)
 
-@app.route('/home')
+
+@app.route("/home")
 def home():
     # Vérifie si l'utilisateur est connecté en regardant la session
-    if 'user' not in session:
+    if "user" not in session:
         # S'il n'est pas connecté, redirige vers la page de connexion
-        return redirect(url_for('login'))
+        return redirect(url_for("login"))
     # Si l'utilisateur est connecté, affiche la page d'accueil protégée
-    return render_template('home.html', user=session['user'])
+    return render_template("home.html", user=session["user"])
 
-@app.route('/logout')
+
+@app.route("/logout")
 def logout():
     # Supprime l'utilisateur de la session pour le déconnecter
-    session.pop('user', None)
+    session.pop("user", None)
     # Redirige vers la page d'accueil publique
-    return redirect(url_for('index'))
+    return redirect(url_for("index"))
 
-@app.route('/quizz')
+
+@app.route("/quizz")
 def quizz():
-    if 'user' not in session:
-        return redirect(url_for('login'))
+    if "user" not in session:
+        return redirect(url_for("login"))
 
     Connexion.connect()
     all_questions = Connexion.get_all_questions()
     questions = random.sample(all_questions, min(len(all_questions), 20))
-    question_ids = [str(q['_id']) for q in questions]
-    
-    quizz_id = Connexion.add_quizz(session['user'], question_ids)
-    session['quizz_questions'] = question_ids
-    session['quizz_id'] = str(quizz_id)
+    question_ids = [str(q["_id"]) for q in questions]
+
+    quizz_id = Connexion.add_quizz(session["user"], question_ids)
+    session["quizz_questions"] = question_ids
+    session["quizz_id"] = str(quizz_id)
 
     Connexion.disconnect()
 
-    return render_template('quizz.html', user=session['user'], questions=questions)
-    
+    return render_template("quizz.html", user=session["user"], questions=questions)
+
+
 @app.route("/question/<int:_id>")
 def question_detail(_id):
     question = next((q for q in Connexion.get_question_by_id if q["_id"] == _id), None)
@@ -149,17 +163,17 @@ def question_detail(_id):
         return "Question not found", 404
     return render_template("question_detail.html", question=question)
 
+
 @app.route("/submit_quizz", methods=["POST"])
 def submit_quizz():
-
-    if 'quizz_questions' not in session:
-        return redirect(url_for('quizz'))
+    if "quizz_questions" not in session:
+        return redirect(url_for("quizz"))
 
     score = 0
     Connexion.connect()
     results = []
 
-    for q_id in session['quizz_questions']:
+    for q_id in session["quizz_questions"]:
         question = Connexion.get_question_by_id(ObjectId(q_id))
         if not question:
             continue
@@ -171,29 +185,99 @@ def submit_quizz():
         if correct:
             score += 1
 
-        results.append({
-            "question": question,
-            "selected": selected,
-            "correct": correct,
-            "correct_answers": correct_answers
-        })
+        results.append(
+            {
+                "question": question,
+                "selected": selected,
+                "correct": correct,
+                "correct_answers": correct_answers,
+            }
+        )
 
     Connexion.disconnect()
 
-    session.pop('quizz_questions', None)
+    session.pop("quizz_questions", None)
 
-    return render_template("results.html", user=session['user'], score=score, total=len(results), results=results)
+    return render_template(
+        "results.html",
+        user=session["user"],
+        score=score,
+        total=len(results),
+        results=results,
+    )
+
+
+# Connexion à MongoDB
+client = MongoClient("mongodb://isen:isen@localhost:27017/admin")
+db = client["miskatonic"]
+questions_collection = db["questions"]
+
+
+@app.route("/addquestion", methods=["GET", "POST"])
+def addquestion():
+    if request.method == "POST":
+        # Champs texte
+        question = request.form.get("question")
+        subject = request.form.get("subject")
+        use = request.form.get("use")
+        answera = request.form.get("answera")
+        answerb = request.form.get("answerb")
+        answerc = request.form.get("answerc")
+        answerd = request.form.get("answerd")
+        remark = request.form.get("remark")
+
+        # Liste des bonnes réponses (texte)
+        good_answer_texte = []
+        correct_letters = []  # stockera "A", "B", etc.
+
+        if "correcta" in request.form:
+            good_answer_texte.append(answera)
+            correct_letters.append("A")
+        if "correctb" in request.form:
+            good_answer_texte.append(answerb)
+            correct_letters.append("B")
+        if "correctc" in request.form:
+            good_answer_texte.append(answerc)
+            correct_letters.append("C")
+        if "correctd" in request.form:
+            good_answer_texte.append(answerd)
+            correct_letters.append("D")
+
+        # Conversion des lettres cochées en une string séparée par virgules
+        correct_str = ",".join(correct_letters)
+
+        # Document MongoDB
+        new_question = {
+            "question": question,
+            "subject": subject,
+            "use": use,
+            "correct": correct_str,  # ex: "A,C,D"
+            "answers": {"A": answera, "B": answerb, "C": answerc, "D": answerd},
+            "good_answers_texte": good_answer_texte,  # les textes
+            "remark": remark,
+        }
+
+        # Insertion
+        questions_collection.insert_one(new_question)
+
+        return f"Question ajoutée avec succès !<br>Correct = {correct_str}<br>Bonne(s) réponses = {good_answer_texte}"
+    
+    subjects = questions_collection.distinct("subject")
+    uses = questions_collection.distinct("use")
+    
+    return render_template("form.html", subjects=subjects, uses=uses)
+
 
 @app.route("/privacy")
 def privacy():
-    return render_template('privacy.html')
+    return render_template("privacy.html")
 
-@app.route('/favicon.ico')
+
+@app.route("/favicon.ico")
 def favicon():
-    return redirect(url_for('static', filename='favicon.ico'))
+    return redirect(url_for("static", filename="favicon.ico"))
+
 
 if __name__ == "__main__":
     # Lancement de l'application Flask en mode debug
     app.run(debug=True)
-
-

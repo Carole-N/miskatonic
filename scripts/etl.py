@@ -1,5 +1,6 @@
 import pandas as pd
 from typing import Dict
+from pymongo import MongoClient
 
 # Commentaire by gpt, revu par C.G.
 
@@ -115,22 +116,46 @@ def transform_data(donnees_brutes: Dict[str, pd.DataFrame]) -> Dict[str, pd.Data
     # Ajout d'une colonne id en position 0 autoIncr
     # -------------------------------
     df_final.insert(0, "id", range(1, len(df_final) + 1))
+    
+    
     # -------------------------------
     # Export du résultat en JSON
     # -------------------------------
-    output_path = "./data/questions.json"
-    df_final.to_json(output_path, orient="records", force_ascii=False, indent=4)
-    print(f"JSON créé avec succès : {output_path}")
+    
+    
+    # output_path = "./data/questions.json"
+    # df_final.to_json(output_path, orient="records", force_ascii=False, indent=4)
+    # print(f"JSON créé avec succès : {output_path}")
 
-    return {"csv": df_final}
+    # return {"csv": df_final}
+    return df_final
 
+#----------------------
+#Insertion dans mongo directe
+#----------------------
+def load_data(df: pd.DataFrame):
+    if df.empty:
+        print("Aucune donnée à insérer")
+        return
 
-# -------------------------------
+    client = MongoClient("mongodb://isen:isen@localhost:27017/admin")
+    db = client["miskatonic"]
+    collection = db["questions"]
+
+    records = df.to_dict(orient="records")
+    collection.insert_many(records)
+
+    print(f"{len(records)} questions insérées dans MongoDB.")
+    # -------------------------------
 # 3) Point d'entrée du script
 # -------------------------------
+
+
 if __name__ == "__main__":
     # Étape 1 : Extraction
     dfs = extract_data()
 
     # Étape 2 : Transformation
     dfs_transformed = transform_data(dfs)
+    
+    load_data(dfs_transformed)

@@ -57,14 +57,14 @@
         </div>
     </div>
     <div>
-        <div class="error"> 
+        <div class="error">
             {% if message %}
             <p style="color:red;">{{ message }}</p>
             <img id="warning" src="{{ url_for('static', filename='images/warning.png') }}" alt="blazon"></img>
             {% endif %}
         </div>
     </div>
-    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 
 <footer>
