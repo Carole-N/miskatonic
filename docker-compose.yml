@@ -2,7 +2,7 @@
 services:
   mongodb:
     image : mongo:7.0
-    container_name: my_mongo
+    container_name: miskamongo
     environment:
       MONGO_INITDB_ROOT_USERNAME: isen
       MONGO_INITDB_ROOT_PASSWORD: isen

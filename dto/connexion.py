@@ -57,3 +57,9 @@ class Connexion:
     @classmethod
     def disconnect(cls):
         cls.client.close()
+
+    @classmethod
+    def get_db(cls):
+        if cls.db is None:
+            raise Exception("Database not connected. Call Connexion.connect() first.")
+        return cls.db
