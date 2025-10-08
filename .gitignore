@@ -1,7 +1,6 @@
 .mkvenv/
 .env
-data/
-docker-compose.yml
 Dockerfile
 docker-compose.yml
 db/
+dto/config.py
