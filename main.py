@@ -1,43 +1,74 @@
-from fastapi import FastAPI
-from dto.connexion import Connexion
-from dto.services import QuestionService
+# main.py
+from fastapi import FastAPI, Depends, HTTPException
+from sqlalchemy.orm import Session
+from dto.services import QuestionService, UserService
+from database.sqlite import get_db_sqlite
 from models.questions import QuestionModel
+from models.user_dto import UserModel
 
-app = FastAPI()
-
-Connexion.connect()
+app = FastAPI(title="Quiz API")
 
 @app.get("/")
-def fast_root():
+def root():
     return {"message": "API running"}
 
-@app.post("/question")
-def fast_add_question(question: QuestionModel):
-    id_question = QuestionService.add_question(question)
-    return {"id": id_question}
 
-@app.get("/question")
-def fast_get_all_questions():  
+# --- Questions (MongoDB) ---
+@app.post("/question", tags=["Questions"])
+def add_question(question: QuestionModel):
+    return {"id": QuestionService.add_question(question)}
+
+
+@app.get("/question", tags=["Questions"])
+def get_all_questions():
     return QuestionService.get_all_questions()
 
-@app.get("/question")
-def fast_get_question_by_id(question_id: str):
-    question = QuestionService.get_question_by_id(question_id)
-    if question is None:
-        return {"error": "Question not found"}
-    return question
 
-@app.put("/question/{question_id}")
-def fast_update_question(question_id: str, question: str, subject: str, use: str, correct: list[str], responses: list[str], good_answer_texte: str, remark: str|None):
-    update_data = {"question": question, "subject": subject, "use": use, "correct": correct, "responses": responses, "good_answer_texte": good_answer_texte, "remark": remark}
+@app.get("/question/{question_id}", tags=["Questions"])
+def get_question_by_id(question_id: str):
+    q = QuestionService.get_question_by_id(question_id)
+    if not q:
+        raise HTTPException(status_code=404, detail="Question not found")
+    return q
+
+@app.put("/question/{question_id}", tags=["Questions"])
+def update_question_by_id(question_id: str, question: str, subject: str, use: str, correct: list[str], responses: list[str], good_answer_texte: list[str], remark: str | None):
+    update_data = {"question:": question, "subject": subject, "use": use, "correct": correct, "responses": responses, "good_answer_texte": good_answer_texte, "reamark": remark }
     modified_count = QuestionService.update_question_by_id(question_id, update_data)
     if modified_count == 0:
         return {"error": "Question not found"}
     return {"message": "Question successfully modified"}
 
-@app.delete("/question/{question_id}")
-def fast_delete_question(question_id: str):
+@app.delete("/question/{question_id}", tags=["Questions"])
+def delete_question_by_id(question_id:str):
     deleted_count = QuestionService.delete_question_by_id(question_id)
     if deleted_count == 0:
         return {"error": "Question not found"}
     return {"message": "Question deleted successfully"}
+
+# --- Utilisateurs (SQLite) ---
+@app.get("/users", response_model=list[UserModel],tags=["Users"])
+def get_users(db: Session = Depends(get_db_sqlite)):
+    users = UserService.get_all_users(db)
+    return [UserModel.model_validate(u) for u in users]
+
+
+@app.post("/users", tags=["Users"])
+def add_user(user: UserModel, db: Session = Depends(get_db_sqlite)):
+    # Vérifier si le nom d'utilisateur existe déjà
+    all_users = UserService.get_all_users(db)
+    if any(u.user_name == user.user_name for u in all_users):
+        raise HTTPException(status_code=400, detail="User already exists")
+
+    # Forcer role_id à 3 (élève)
+    user.role_id = 3
+
+    return UserService.add_user(db, user)
+
+@app.post("/login", tags=["Users"])
+def login_user(user: UserModel, db: Session = Depends(get_db_sqlite)):
+    all_users = UserService.get_all_users(db)
+    db_user = next((u for u in all_users if u.user_name == user.user_name), None)
+    if not db_user or db_user.password_hash != user.password_hash:
+        raise HTTPException(status_code=401, detail="Invalid username or password")
+    return {"message": "Login successful"}

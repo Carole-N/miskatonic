@@ -7,5 +7,5 @@ class QuestionModel(BaseModel):
     use: str
     correct: list[str]
     responses: list[str]
-    good_answer_texte: str
+    good_answer_texte: list[str]
     remark: str | None
