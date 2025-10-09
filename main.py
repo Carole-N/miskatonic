@@ -8,6 +8,7 @@ from models.user_dto import UserModel
 
 app = FastAPI(title="Quiz API")
 
+
 @app.get("/")
 def root():
     return {"message": "API running"}
@@ -21,7 +22,9 @@ def add_question(question: QuestionModel):
 
 @app.get("/question", tags=["Questions"])
 def get_all_questions():
-    return QuestionService.get_all_questions()
+    questions = QuestionService.get_all_questions()
+    print("Raw questions:", questions)
+    return questions
 
 
 @app.get("/question/{question_id}", tags=["Questions"])
@@ -31,23 +34,43 @@ def get_question_by_id(question_id: str):
         raise HTTPException(status_code=404, detail="Question not found")
     return q
 
+
 @app.put("/question/{question_id}", tags=["Questions"])
-def update_question_by_id(question_id: str, question: str, subject: str, use: str, correct: list[str], responses: list[str], good_answer_texte: list[str], remark: str | None):
-    update_data = {"question:": question, "subject": subject, "use": use, "correct": correct, "responses": responses, "good_answer_texte": good_answer_texte, "reamark": remark }
+def update_question_by_id(
+    question_id: str,
+    question: str,
+    subject: str,
+    use: str,
+    correct: list[str],
+    responses: list[str],
+    good_answer_texte: list[str],
+    remark: str | None,
+):
+    update_data = {
+        "question:": question,
+        "subject": subject,
+        "use": use,
+        "correct": correct,
+        "responses": responses,
+        "good_answer_texte": good_answer_texte,
+        "reamark": remark,
+    }
     modified_count = QuestionService.update_question_by_id(question_id, update_data)
     if modified_count == 0:
         return {"error": "Question not found"}
     return {"message": "Question successfully modified"}
 
+
 @app.delete("/question/{question_id}", tags=["Questions"])
-def delete_question_by_id(question_id:str):
+def delete_question_by_id(question_id: str):
     deleted_count = QuestionService.delete_question_by_id(question_id)
     if deleted_count == 0:
         return {"error": "Question not found"}
     return {"message": "Question deleted successfully"}
 
+
 # --- Utilisateurs (SQLite) ---
-@app.get("/users", response_model=list[UserModel],tags=["Users"])
+@app.get("/users", response_model=list[UserModel], tags=["Users"])
 def get_users(db: Session = Depends(get_db_sqlite)):
     users = UserService.get_all_users(db)
     return [UserModel.model_validate(u) for u in users]
@@ -64,6 +87,7 @@ def add_user(user: UserModel, db: Session = Depends(get_db_sqlite)):
     user.role_id = 3
 
     return UserService.add_user(db, user)
+
 
 @app.post("/login", tags=["Users"])
 def login_user(user: UserModel, db: Session = Depends(get_db_sqlite)):

@@ -84,9 +84,9 @@ def transform_data(donnees_brutes: Dict[str, pd.DataFrame]) -> Dict[str, pd.Data
 
     # Application de la fonction à toutes les lignes
     df["good_answers_texte"] = df.apply(extraire_bonnes_reponses, axis=1)
-    
+
     # filter out records using dropna method
-    df_filtered = df[df['correct'].notna()].copy()  # <-- important: copy()
+    df_filtered = df[df["correct"].notna()].copy()  # <-- important: copy()
 
     # Crée la colonne responses directement dans df_filtered
     df_filtered["responses"] = df_filtered.apply(
@@ -97,7 +97,7 @@ def transform_data(donnees_brutes: Dict[str, pd.DataFrame]) -> Dict[str, pd.Data
             row["responseD"],
         ],
         axis=1,
-)
+    )
     # -------------------------------
     # Sélection des colonnes finales
     # -------------------------------
@@ -116,13 +116,13 @@ def transform_data(donnees_brutes: Dict[str, pd.DataFrame]) -> Dict[str, pd.Data
     # Ajout d'une colonne id en position 0 autoIncr
     # -------------------------------
     df_final.insert(0, "id", range(1, len(df_final) + 1))
-    
-    
+
+
+    df_final = df_final.where(pd.notna(df_final), None)
     # -------------------------------
     # Export du résultat en JSON
     # -------------------------------
-    
-    
+
     # output_path = "./data/questions.json"
     # df_final.to_json(output_path, orient="records", force_ascii=False, indent=4)
     # print(f"JSON créé avec succès : {output_path}")
@@ -130,23 +130,28 @@ def transform_data(donnees_brutes: Dict[str, pd.DataFrame]) -> Dict[str, pd.Data
     # return {"csv": df_final}
     return df_final
 
-#----------------------
-#Insertion dans mongo directe
-#----------------------
+
+# ----------------------
+# Insertion dans mongo directe
+# ----------------------
 def load_data(df: pd.DataFrame):
     if df.empty:
         print("Aucune donnée à insérer")
         return
+    try:
+        client = MongoClient("mongodb://isen:isen@localhost:27017/admin")
+        db = client["miskatonic"]
+        collection = db["question"]
 
-    client = MongoClient("mongodb://isen:isen@localhost:27017/admin")
-    db = client["miskatonic"]
-    collection = db["questions"]
+        records = df.to_dict(orient="records")
+        collection.insert_many(records)
 
-    records = df.to_dict(orient="records")
-    collection.insert_many(records)
-
-    print(f"{len(records)} questions insérées dans MongoDB.")
+        print(f"{len(records)} questions insérées dans MongoDB.")
+    except:
+        print("Erreur lors de l'insertion dans mongo")
     # -------------------------------
+
+
 # 3) Point d'entrée du script
 # -------------------------------
 
@@ -157,5 +162,5 @@ if __name__ == "__main__":
 
     # Étape 2 : Transformation
     dfs_transformed = transform_data(dfs)
-    
+
     load_data(dfs_transformed)

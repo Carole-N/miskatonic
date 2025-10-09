@@ -15,6 +15,7 @@ body {
   display: flex;
   justify-content: space-around;
   flex-wrap: wrap;
+  
   margin: 2em;
 }
 
@@ -22,19 +23,28 @@ body {
 .mainBoxTeacher,
 .error, 
 .quizzbox {
+  border-radius: 1em;
+  box-shadow:5px 5px 15px 3px #1a1a1a;
+  display: flex;
   flex: 1;
   margin: 0 1em;
-  border-radius: 1em;
-  display: flex;
   justify-content: space-around;
 }
 
+.quizzbox{
+  background: rgba(202, 251, 255, 0.5);
+  margin: 2em;
+  margin-left: 10%;
+  margin-right: 10%;
+  padding: 2em;
+}
+
 .mainBoxStudents {
-  background-color: aqua;
+  background: rgba(202, 251, 255, 0.5);
 }
 
 .mainBoxTeacher {
-  background-color: rgb(255, 247, 0);
+  background-color: rgba(41, 255, 66, 0.5);
 }
 
 .shadow {
@@ -170,4 +180,16 @@ nav>ul li:hover .under {
   border-radius: 3em;
   padding: 2em;
   max-width: 30%;
+}
+
+.histoire{
+  backdrop-filter: blur(3.4px);
+  -webkit-backdrop-filter: blur(3.4px);
+  background: rgba(202, 251, 255, 0.5);
+  border: 1px solid rgba(0, 236, 255, 0.75);
+  border-radius: 5em;
+  box-shadow:5px 5px 15px 3px #1a1a1a;
+  margin-left: 10%;
+  margin-right: 10%;
+  padding: 1em;
 }

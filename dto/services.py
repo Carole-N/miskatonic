@@ -44,6 +44,20 @@ class QuestionService:
         result = cls.get_collection().delete_one({"_id": ObjectId(question_id)})
         return result.deleted_count
 
+    @classmethod
+    def save_quizz_result(cls, questions: dict):
+        db = MongoConnection.connect()
+        quizz_doc = [
+            {
+                "question_id": str(q.get("_id", q.get("id"))),
+                "question_text": q["question"],
+                "selected": q["selected"],
+                "c": q["correct_answers"],
+            }
+            for q in questions
+        ]
+        db["quizz"].insert_one({"quizz": quizz_doc})
+
 
 # ---- Service SQLite (Utilisateurs) ----
 class UserService:
@@ -57,7 +71,7 @@ class UserService:
 
     @staticmethod
     def add_user(db, user: UserModel):
-        db_user = UserDB(**user.model_dump()) 
+        db_user = UserDB(**user.model_dump())
         db.add(db_user)
         db.commit()
         db.refresh(db_user)

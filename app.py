@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 import requests
 from hashlib import sha256
+import random
+from dto.services import QuestionService
 
 app = Flask(__name__)
 app.secret_key = "miufdzpiugfeza"
@@ -65,14 +67,63 @@ def home():
     return render_template("home.html", user=session["user"])
 
 
-@app.route("/quizz")
+@app.route("/quizz", methods=["GET", "POST"])
 def quizz():
     if "user" not in session:
         return redirect(url_for("login"))
 
+    # post
+    if request.method == "POST":
+        answers = request.form.to_dict(flat=False)
+        print("Réponses utilisateur:", answers)
+
+        questions = session.get("quiz_questions", [])
+
+        results = []
+        score = 0
+
+        for q in questions:
+            q_id = str(q.get("_id", q.get("id")))
+            user_selected = answers.get(f"response_{q_id}", [])
+            correct_answers = q.get("good_answers_texte", [])
+
+            is_correct = sorted(user_selected) == sorted(q["good_answers_texte"])
+            if is_correct:
+                score += 1
+
+            results.append({
+                "question": q,
+                "selected": user_selected,
+                "correct_answers": correct_answers,
+                "correct": is_correct
+            })
+
+        total = len(questions)
+        QuestionService.save_quizz_result(results)
+        session.pop("quiz_questions", None)
+
+        return render_template(
+            "results.html",
+            user=session["user"],
+            results=results,
+            score=score,
+            total=total
+        )
+
+    # get
     res = requests.get(f"{FASTAPI_URL}/question")
-    questions = res.json() if res.status_code == 200 else []
-    return render_template("quizz.html", user=session["user"], questions=questions)
+    all_questions = res.json() if res.status_code == 200 else []
+
+    if len(all_questions) > 20:
+        selected_questions = random.sample(all_questions, 20)
+    else:
+        selected_questions = all_questions
+
+    # ✅ On garde les 20 questions dans la session
+    session["quiz_questions"] = selected_questions
+
+    return render_template("quizz.html", user=session["user"], questions=selected_questions)
+
 
 @app.route("/privacy")
 def privacy():

@@ -11,18 +11,21 @@
 
 <body>
     <nav>
-        <p>Welcome, {{ user }} | <a href="{{ url_for('home') }}">Home</a> | <a href="{{ url_for('logout') }}">Logout</a>
+        <p>
+            Welcome, {{ user }} |
+            <a href="{{ url_for('home') }}">Home</a> |
+            <a href="{{ url_for('logout') }}">Logout</a>
         </p>
     </nav>
 
     <div class="quizzbox">
-        <form method="POST" action="{{ url_for('submit_quizz') }}">
-            {% for question in questions %}
+        <form method="POST" action="{{ url_for('quizz') }}">
+            {% for q in questions %}
             <div class="question">
-                <h3>{{ loop.index }}. {{ question['question'] }}</h3>
-                {% for option in question['responses'] %}
+                <h3>{{ loop.index }}. {{ q['question'] }}</h3>
+                {% for option in q['responses'] %}
                 <label>
-                    <input type="checkbox" name="response_{{ question['_id'] }}" value="{{ responses }}">
+                    <input type="checkbox" name="response_{{ q.get('_id', q.get('id')) }}" value="{{ option }}">
                     {{ option }}
                 </label><br>
                 {% endfor %}
@@ -32,8 +35,10 @@
             <button type="submit">Submit All Answers</button>
         </form>
     </div>
+
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
+
 <footer>
     <div>
         <a href="{{ url_for('privacy') }}">Privacy Policy</a>
