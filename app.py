@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, get_flashed_messages
 import requests
 from hashlib import sha256
 import random
@@ -128,6 +128,7 @@ def quizz():
 @app.route("/privacy")
 def privacy():
     return render_template("privacy.html")
+
 
 if __name__ == "__main__":
     app.run(port=5000, debug=True)

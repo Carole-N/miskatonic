@@ -1,7 +1,7 @@
 # main.py
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
-from dto.services import QuestionService, UserService
+from dto.services import QuestionService, UserService, QuizzService
 from database.sqlite import get_db_sqlite
 from models.questions import QuestionModel
 from models.user_dto import UserModel
@@ -96,3 +96,26 @@ def login_user(user: UserModel, db: Session = Depends(get_db_sqlite)):
     if not db_user or db_user.password_hash != user.password_hash:
         raise HTTPException(status_code=401, detail="Invalid username or password")
     return {"message": "Login successful"}
+
+
+# --- Quizz (MongoDB) ---
+
+app.get("/quizz/{quizz_id}", tags=["Quizz"])
+def get_quizz_by_id():
+    quizz = QuizzService.get_quizz_by_id()
+    if not quizz:
+        raise HTTPException(status_code=404, detail="Quizz not found")
+    return quizz
+
+@app.get("/quizz", tags=["Quizz"])
+def get_all_questions():
+    quizzs = QuizzService.get_all_quizzs()
+    print("Raw quizz:", quizzs)
+    return quizzs
+
+@app.delete("/quizz/{quizz_id}", tags=["Quizz"])
+def delete_question_by_id(question_id: str):
+    deleted_count = QuestionService.delete_question_by_id(question_id)
+    if deleted_count == 0:
+        return {"error": "Question not found"}
+    return {"message": "Question deleted successfully"}

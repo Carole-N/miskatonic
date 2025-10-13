@@ -33,6 +33,21 @@ class QuestionService:
         return q
 
     @classmethod
+    def get_all_questions(cls):
+        questions = list(cls.get_collection().find())
+        print("Questions récupérées dans le service:", questions)
+        for q in questions:
+            q["_id"] = str(q["_id"])
+        return questions
+
+    @classmethod
+    def get_quizz_by_id(cls, quizz_id: str):
+        q = cls.get_collection().find_one({"_id": ObjectId(quizz_id)})
+        if q:
+            q["_id"] = str(q["_id"])
+        return q
+
+    @classmethod
     def update_question_by_id(cls, question_id: str, update_data: dict):
         result = cls.get_collection().update_one(
             {"_id": ObjectId(question_id)}, {"$set": update_data}
@@ -96,3 +111,29 @@ class UserService:
         db.delete(user)
         db.commit()
         return user
+
+
+class QuizzService:
+    @classmethod
+    def get_collection_quizz():
+        return MongoConnection.connect_coll2()
+
+    @classmethod
+    def get_all_quizzs(cls):
+        quizz = list(cls.get_collection_quizz().find())
+        print("Quizzs récupérées dans le service:", quizz)
+        for q in quizz:
+            q["_id"] = str(q["_id"])
+        return quizz
+
+    @classmethod
+    def get_quizz_by_id(cls, quizz_id: str):
+        q = cls.get_collection_quizz().find_one({"_id": ObjectId(quizz_id)})
+        if q:
+            q["_id"] = str(q["_id"])
+        return q
+
+    @classmethod
+    def delete_quizz_by_id(cls, quizz_id: str):
+        result = cls.get_collection_quizz().delete_one({"_id": ObjectId(quizz_id)})
+        return result.deleted_count

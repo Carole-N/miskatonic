@@ -1,6 +1,6 @@
 # database/mongo.py
 from pymongo import MongoClient
-from dto.config import MDB_CONNECTION, MDB_BASE, MDB_COLLECTION
+from dto.config import MDB_CONNECTION, MDB_BASE, MDB_COLLECTION,  MDB_COLLECTION2
 
 class MongoConnection:
     client: MongoClient = None
@@ -13,6 +13,14 @@ class MongoConnection:
             cls.client = MongoClient(MDB_CONNECTION)
             cls.db = cls.client[MDB_BASE]
             cls.collection = cls.db[MDB_COLLECTION]
+        return cls.collection
+    
+    @classmethod
+    def connect_coll2(cls):
+        if cls.client is None:
+            cls.client = MongoClient(MDB_CONNECTION)
+            cls.db = cls.client[MDB_BASE]
+            cls.collection = cls.db[MDB_COLLECTION2]
         return cls.collection
 
     @classmethod
