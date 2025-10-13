@@ -115,7 +115,7 @@ class UserService:
 
 class QuizzService:
     @classmethod
-    def get_collection_quizz():
+    def get_collection_quizz(cls):
         return MongoConnection.connect_coll2()
 
     @classmethod
@@ -132,6 +132,15 @@ class QuizzService:
         if q:
             q["_id"] = str(q["_id"])
         return q
+
+    @classmethod
+    def get_subjects_from_mongo():
+        questions = QuestionService.get_all_questions()
+        subjects = sorted(set(q.get("subject", "").strip() for q in questions if q.get("subject")))
+        return subjects
+
+    @classmethod
+    
 
     @classmethod
     def delete_quizz_by_id(cls, quizz_id: str):

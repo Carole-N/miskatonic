@@ -11,11 +11,9 @@
 </head>
 
 <body>
-    </div>
-    {% endif %}
-    {% endwith %}
     <div>
         <div>
+            <h1>Welcome to a very professional website</h1>
             <div class="mainBox">
                 <div class="mainBoxStudents">
                     <div class="shadow">
@@ -23,6 +21,7 @@
                         <div>
                             <div class="credentials">
                                 <form action="/login" method="POST">
+                                    <input type="hidden" name="role" value="student">
                                     <p><label for="user">Username</label></p>
                                     <p><input type="text" id="user" name="user" placeholder="**********" required></p>
                                     <p><label for="pwd">Password</label></p>
@@ -31,7 +30,9 @@
                                         <button type="submit" value="submit">Submit</button>
                                     </div>
                                 </form>
-                                <div>Not registerd yet ? <br><a href="register">Click here</a></div>
+                                <div>Not registerd yet ? <br>
+                                    <a href="{{ url_for('register', role='student') }}">Click here</a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -42,15 +43,19 @@
                         <div>
                             <div class="credentials">
                                 <form action="/login" method="POST">
-                                    <label for="user">Username</label><br>
-                                    <input type="text" id="user" name="user" placeholder="**********" required><br>
-                                    <label for="pwd">Password</label><br>
-                                    <input type="password" id="pwd" name="pwd" placeholder="**********" required>
+                                    <input type="hidden" name="role" value="teacher">
+                                    <p><label for="user">Username</label><br>
+                                        <input type="text" id="user" name="user" placeholder="**********" required>
+                                    </p>
+                                    <p><label for="pwd">Password</label></p>
+                                    <p><input type="password" id="pwd" name="pwd" placeholder="**********" required></p>
                                     <div class="alignbtn">
-                                        <button class="enter">Enter</button>
+                                        <button type="submit" value="submit">Submit</button>
                                     </div>
                                 </form>
-
+                                <div>Not registered yet ? <br>
+                                    <a href="{{ url_for('register', role='teacher') }}">Click here</a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -59,16 +64,14 @@
         </div>
     </div>
     <div>
-        <!-- <div class="error">
+        <div class="error">
             {% if message %}
             <p style="color:red;">{{ message }}</p>
             <img id="warning" src="{{ url_for('static', filename='images/warning.png') }}" alt="blazon"></img>
             {% endif %}
-        </div> -->
+        </div>
     </div>
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
-
 <footer>
     <div>
         <a href="{{ url_for('privacy') }}">Privacy Policy</a>

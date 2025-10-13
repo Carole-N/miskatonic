@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" />
+  <title>Espace Prof</title>
+</head>
+<body>
+  <h1>Espace Enseignant</h1>
+  <p><a href="{{ url_for('teacher_quiz_setup') }}"><button>Créer un quiz</button></a></p>
+  <p><a href="{{ url_for('logout') }}">Déconnexion</a></p>
+</body>
+</html>
