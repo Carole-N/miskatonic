@@ -34,7 +34,7 @@
     <button type="submit">Générer (aperçu à venir)</button>
   </form>
   <div>
-    <button><a href="{{ url_for('archived_quizz') }}">Archive des quizzs</a></button>
+    <button><a href="{{ url_for('archived_quizz', quizz_id=_id) }}">Voir</a></button>
   </div>
 
   <p><a href="{{ url_for('teacher_home') }}">Retour à l'espace enseignant</a></p>

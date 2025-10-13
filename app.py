@@ -151,23 +151,25 @@ def teacher_quiz_preview():
 
 
 @app.route("/quizz/archivedquizz/")
+def archived_quizz_list():
+    if "user" not in session:
+        return redirect(url_for("login"))
+
+    quizzes = QuizzService.get_all_quizzs()
+    return render_template("archivedquizz.html", quizzes=quizzes)
+
+
+@app.route("/quizz/archivedquizz/<quizz_id>")
 def archived_quizz(quizz_id):
     if "user" not in session:
         return redirect(url_for("login"))
 
     quizz = QuizzService.get_quizz_by_id(quizz_id)
+    print("DEBUG quizz:", quizz)
     if not quizz:
         return render_template("error.html", message="Quiz introuvable")
 
-    return render_template("archived_quizz.html", quizz=quizz)
-
-@app.route("/quizz/archivedquizz")
-def archived_quizz_list():
-    if "user" not in session:
-        return redirect(url_for("login"))
-
-    quizz_list = QuizzService.get_all_quizzs()
-    return render_template("archived_quizz_list.html", quizz_list=quizz_list)
+    return render_template("archived_quizz_detail.html", quizz=quizz)
 
 @app.route("/privacy")
 def privacy():

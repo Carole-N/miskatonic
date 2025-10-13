@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détail du quiz archivé</title>
+</head>
+
+<body>
+    <h1>Détail du quiz archivé</h1>
+
+    {% if quizz %}
+    <p><strong>ID :</strong> {{ quizz._id }}</p>
+    <p><strong>Utilisateur :</strong> {{ quizz.user }}</p>
+
+    <h3>Questions</h3>
+    {% if quizz.quizz %}
+    <ul>
+        {% for q in quizz.quizz %}
+        {% set qt = q.question_text %}
+        <li>
+            <div class="question">{{ loop.index }}. {{ qt.question }}</div>
+            <div class="answers">
+                <p><strong>Réponses possibles :</strong></p>
+                {% if qt.responses %}
+                <ul>
+                    {% for r in qt.responses %}
+                    <li>{{ r }}</li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p><em>Aucune réponse trouvée</em></p>
+                {% endif %}
+
+                <p><strong>Réponse correcte :</strong>
+                    {% if qt.good_answers_texte %}
+                    {{ qt.good_answers_texte | join(", ") }}
+                    {% else %}
+                    <em>Non définie</em>
+                    {% endif %}
+                </p>
+
+                {% if qt.remark %}
+                <p><strong>Remarque :</strong> {{ qt.remark }}</p>
+                {% endif %}
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>Aucune question trouvée dans ce quiz.</p>
+    {% endif %}
+    </ul>
+    {% else %}
+    <p>Quiz introuvable.</p>
+    {% endif %}
+
+    <a href="{{ url_for('archived_quizz_list') }}">⬅ Retour à la liste</a>
+</body>
+
+</html>
