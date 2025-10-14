@@ -1,0 +1,20 @@
+{
+  "_id": {
+    "$oid": str
+  },
+  "id": int,
+  "question": str,
+  "subject": str,
+  "use": str,
+  "correct": list[str],
+  "responses": [
+    str,
+    str,
+    str,
+    str
+  ],
+  "good_answers_texte": [
+    list[str]
+  ],
+  "remark": str | null
+}
