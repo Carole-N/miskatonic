@@ -1,29 +1,60 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Archived quizz</title>
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" />
+    <title>Détail du quiz archivé</title>
 </head>
 
 <body>
-    <h1>Quiz archivés</h1>
+    <h1>Détail du quiz archivé</h1>
 
-    {% if quizzes %}
-        <ul>
-            {% for quiz in quizzes %}
-                <li>
-                    Quiz ID : {{ quiz._id }} <br>
-                    Utilisateur : {{ quiz.user }} <br>
-                    <a href="{{ url_for('archived_quizz', quizz_id=quiz._id) }}">Voir</a>
-                </li>
+    {% if quizz %}
+        <p><strong>ID :</strong> {{ quizz._id }}</p>
+        <p><strong>Utilisateur :</strong> {{ quizz.user }}</p>
+        <p><strong>Thème :</strong> {{ quizz.subject }}</p>
+
+        {% if quizz.questions %}
+            {% for q in quizz.questions %}
+                <div class="question">
+                    <p><strong>Question :</strong> {{ q.question }}</p>
+
+                    <p><strong>Réponses possibles :</strong></p>
+                    <ul>
+                        {% for r in q.responses %}
+                            {% if r in q.good_answers_texte %}
+                                <li class="correct">{{ r }} (✅bonne réponse)</li>
+                            {% else %}
+                                <li>{{ r }}</li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+
+                    <p><strong>Réponse sélectionnée :</strong>
+                        {% if q.selected %}
+                            <span class="selected">{{ q.selected | join(', ') }}</span>
+                        {% else %}
+                            Non sélectionnée
+                        {% endif %}
+                    </p>
+
+                    {% if q.remark %}
+                        <p class="remark">Remarque : {{ q.remark }}</p>
+                    {% endif %}
+                </div>
             {% endfor %}
-        </ul>
+        {% else %}
+            <p>Aucune question trouvée dans ce quiz.</p>
+        {% endif %}
     {% else %}
-        <p>Aucun quiz archivé trouvé.</p>
+        <p>Quiz introuvable.</p>
     {% endif %}
+
+    <p><a href="{{ url_for('archived_quizz_list') }}">⬅ Retour à la liste des quizz</a></p>
 </body>
+
 
 <footer>
     <div>

@@ -19,14 +19,11 @@
     </head>
 
     <body>
-        <div class="accesquizz">
-            <h2>Accéder à un quizz : </h2>
-            <form action="post">
-            <label for="user">Numéro du quizz</label><br>
-            <input type="text" id="quizzid" name="quizzid" placeholder="**********" required><br>
+        <form action="{{ url_for('student_access_quizz') }}" method="GET">
+            <label for="quizz_id">Entrer le code du quiz :</label>
+            <input type="text" id="quizz_id" name="quizz_id" placeholder="Ex: 68ee1bef9c982e42fe9376d4" required>
             <button type="submit">Accéder</button>
-            </form>
-        </div>
+        </form>
         <h1>L'Épopée Inattendue de Miskatonic</h1>
         <div class="histoire">
             <h2>Chapitre I – Les Débuts Pénibles</h2>

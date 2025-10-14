@@ -1,32 +1,35 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" />
   <title>Paramétrage du quiz (prof)</title>
 </head>
+
 <body>
   <h1>Paramétrage du quiz</h1>
-{% with messages = get_flashed_messages() %}
+  {% with messages = get_flashed_messages() %}
   {% if messages %}
-    <div class="flash">
-      {% for m in messages %}<p>{{ m }}</p>{% endfor %}
-    </div>
+  <div class="flash">
+    {% for m in messages %}<p>{{ m }}</p>{% endfor %}
+  </div>
   {% endif %}
-{% endwith %}
+  {% endwith %}
 
   <form action="{{ url_for('teacher_quiz_preview') }}" method="GET">
     <label for="theme">Thème :</label>
     <select id="theme" name="theme" required>
       {% if subjects and subjects|length > 0 %}
-        {% for s in subjects %}
-          <option value="{{ s }}">{{ s }}</option>
-        {% endfor %}
+      {% for s in subjects %}
+      <option value="{{ s }}" {% if request.args.get('theme')==s %}selected{% endif %}>{{ s }}</option>
+      {% endfor %}
       {% else %}
-        <option value="" disabled selected>— Aucun thème détecté —</option>
+      <option value="" disabled selected>— Aucun thème détecté —</option>
       {% endif %}
     </select>
+
 
     <label for="nb">Nombre de questions :</label>
     <input id="nb" name="nb" type="number" min="1" max="50" value="5" required>
@@ -34,9 +37,10 @@
     <button type="submit">Générer (aperçu à venir)</button>
   </form>
   <div>
-    <button><a href="{{ url_for('archived_quizz', quizz_id=_id) }}">Voir</a></button>
+    <a href="{{ url_for('archived_quizz_list') }}" class="button">Archive des quizzs</a>
   </div>
 
   <p><a href="{{ url_for('teacher_home') }}">Retour à l'espace enseignant</a></p>
 </body>
+
 </html>
