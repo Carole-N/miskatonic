@@ -33,14 +33,6 @@ class QuestionService:
         return q
 
     @classmethod
-    def get_all_questions(cls):
-        questions = list(cls.get_collection().find())
-        print("Questions récupérées dans le service:", questions)
-        for q in questions:
-            q["_id"] = str(q["_id"])
-        return questions
-
-    @classmethod
     def get_quizz_by_id(cls, quizz_id: str):
         q = cls.get_collection().find_one({"_id": ObjectId(quizz_id)})
         if q:
@@ -60,18 +52,31 @@ class QuestionService:
         return result.deleted_count
 
     @classmethod
-    def save_quizz_result(cls, questions: dict):
-        db = MongoConnection.connect()
-        quizz_doc = [
-            {
-                "question_id": str(q.get("_id", q.get("id"))),
-                "question_text": q["question"],
-                "selected": q["selected"],
-                "c": q["correct_answers"],
-            }
-            for q in questions
-        ]
-        db["quizz"].insert_one({"quizz": quizz_doc})
+    def save_quizz_result(cls, user: str, subject: str, questions: list):
+        collection = cls.get_collection_quizz()
+
+        quizz_doc = {
+            "user": user,
+            "subject": subject,
+            "questions": [
+                {
+                    "question_id": str(q.get("_id", q.get("id"))),
+                    "question_text": {
+                        "question": q.get("question"),
+                        "responses": q.get("responses", []),
+                        "good_answers_texte": q.get("good_answers_texte", []),
+                        "remark": q.get("remark"),
+                        "subject": q.get("subject"),
+                    },
+                    "selected": q.get("selected", []),
+                    "correct_answers": q.get("good_answers_texte", []),
+                }
+                for q in questions
+            ],
+        }
+
+        print("DEBUG insertion quiz:", quizz_doc)  # Pour vérifier dans la console
+        collection.insert_one(quizz_doc)
 
 
 # ---- Service SQLite (Utilisateurs) ----
@@ -134,14 +139,38 @@ class QuizzService:
         return q
 
     @classmethod
-    def get_subjects_from_mongo():
+    def get_subjects_from_mongo(cls):
         questions = QuestionService.get_all_questions()
-        subjects = sorted(set(q.get("subject", "").strip() for q in questions if q.get("subject")))
+        subjects = sorted(
+            set(q.get("subject", "").strip() for q in questions if q.get("subject"))
+        )
         return subjects
 
     @classmethod
-    
-
+    def save_quizz_result(cls, user: str, subject: str, questions: list):
+        collection = cls.get_collection_quizz()
+        quizz_doc = {
+            "user": user,
+            "subject": subject,
+            "questions": [
+                {
+                    "question_id": str(q.get("_id", q.get("id"))),
+                    "question_text": {
+                        "question": q.get("question"),
+                        "responses": q.get("responses", []),
+                        "good_answers_texte": q.get("good_answers_texte", []),
+                        "remark": q.get("remark"),
+                        "subject": q.get("subject"),
+                    },
+                    "selected": q.get("selected", []),
+                    "correct_answers": q.get("good_answers_texte", []),
+                }
+                for q in questions
+            ]
+        }
+        print("DEBUG insertion quiz:", quizz_doc)
+        collection.insert_one(quizz_doc)
+        
     @classmethod
     def delete_quizz_by_id(cls, quizz_id: str):
         result = cls.get_collection_quizz().delete_one({"_id": ObjectId(quizz_id)})

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" />
+    <title>Archived quizz</title>
+</head>
+
+<body>
+    <h1>Quiz archivés</h1>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul class="flash-messages">
+        {% for msg in messages %}
+        <li>{{ msg }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+    <ul>
+        {% for quiz in quizz_list %}
+        <li>
+            Quiz ID : {{ quiz._id }} <br>
+            Utilisateur : {{ quiz.user }} <br>
+            <a href="{{ url_for('archived_quizz', quizz_id=quiz._id) }}">Voir le quiz</a>
+        </li>
+        {% else %}
+        <li>Aucun quiz trouvé.</li>
+        {% endfor %}
+    </ul>
+
+</body>
+<footer>
+    <div>
+        <a href="{{ url_for('privacy') }}">Privacy Policy</a>
+        <a href="{{ url_for('teacher_quiz_setup') }}">Retour</a>
+    </div>
+</footer>
+
+</html>

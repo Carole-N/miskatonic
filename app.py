@@ -3,6 +3,7 @@ from hashlib import sha256
 import random
 import requests
 from dto.services import QuestionService, QuizzService
+import json
 
 app = Flask(__name__)
 app.secret_key = "miufdzpiugfeza"
@@ -113,7 +114,11 @@ def teacher_quiz_setup():
     if "user" not in session:
         return redirect(url_for("login"))
     subjects = get_subjects_from_mongo()
-    return render_template("teacher_quiz_setup.html", subjects=subjects)
+    selected_theme = request.args.get("theme", "")
+    return render_template("teacher_quiz_setup.html", subjects=subjects, selected_theme=selected_theme)
+
+
+
 
 
 @app.route("/teacher/quiz-preview")
@@ -122,35 +127,23 @@ def teacher_quiz_preview():
         return redirect(url_for("login"))
 
     subject = request.args.get("theme")
-    try:
-        n = int(request.args.get("nb", "5"))
-    except ValueError:
-        n = 5
-
+    n = int(request.args.get("nb", "5"))
     pool = get_questions_by_subject(subject)
     if not pool:
         flash(f"Aucune question trouvée pour le thème « {subject} »")
         return redirect(url_for("teacher_quiz_setup"))
 
-    k = min(n, len(pool))
-    sample = random.sample(pool, k)
-
-    QuizzService.get_collection_quizz().insert_one({
-        "subject": subject,
-        "questions": sample,
-        "count": k
-    })
-
+    sample = random.sample(pool, min(n, len(pool)))
+    session["quiz_preview"] = sample 
     return render_template(
         "teacher_quiz_preview.html",
         subject=subject,
         questions=sample,
-        count=k,
         total=len(pool)
     )
 
 
-@app.route("/quizz/archivedquizz/")
+@app.route("/quizz/archivedquizz/<quizz_id>")
 def archived_quizz(quizz_id):
     if "user" not in session:
         return redirect(url_for("login"))
@@ -159,15 +152,30 @@ def archived_quizz(quizz_id):
     if not quizz:
         return render_template("error.html", message="Quiz introuvable")
 
-    return render_template("archived_quizz.html", quizz=quizz)
+    return render_template("archivedquizz.html", quizz=quizz)
 
-@app.route("/quizz/archivedquizz")
+@app.route("/quizz/archivedquizz/list")
 def archived_quizz_list():
     if "user" not in session:
         return redirect(url_for("login"))
 
     quizz_list = QuizzService.get_all_quizzs()
     return render_template("archived_quizz_list.html", quizz_list=quizz_list)
+
+
+@app.route("/teacher/save-quiz", methods=["POST"])
+def teacher_save_quiz():
+    if "user" not in session or "quiz_preview" not in session:
+        flash("Aucun quiz à enregistrer.")
+        return redirect(url_for("teacher_quiz_setup"))
+
+    subject = request.form.get("subject")
+    questions = session.pop("quiz_preview")
+    QuizzService.save_quizz_result(user=session["user"], subject=subject, questions=questions)
+    flash("Quiz enregistré avec succès !")
+    return redirect(url_for("archived_quizz_list"))
+
+
 
 @app.route("/privacy")
 def privacy():
