@@ -6,3 +6,5 @@ db/
 dto/config.py
 scripts/__pycache__
 dto/__pycache__
+__pycache__/
+*.pyc
