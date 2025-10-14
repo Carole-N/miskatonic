@@ -175,7 +175,75 @@ def teacher_save_quiz():
     flash("Quiz enregistré avec succès !")
     return redirect(url_for("archived_quizz_list"))
 
+@app.route("/student/quizz/<quizz_id>", methods=["GET", "POST"])
+def student_quizz(quizz_id):
+    if "user" not in session:
+        return redirect(url_for("login"))
 
+    quizz = QuizzService.get_quizz_by_id(quizz_id)
+    if not quizz:
+        flash("Quiz introuvable.")
+        return redirect(url_for("student_home"))
+
+    if request.method == "POST":
+        user_answers = {}
+        score = 0
+        for q in quizz["questions"]:
+            q_id = str(q.get("_id", q.get("id")))
+            selected = request.form.getlist(f"response_{q_id}")
+            user_answers[q_id] = selected
+
+            # Calcul du score : comparer selected vs bonnes réponses
+            correct_answers = q.get("good_answers_texte", [])
+            if set(selected) == set(correct_answers):
+                score += 1
+
+        session["last_quizz_results"] = {
+            "quizz": quizz,
+            "answers": user_answers,
+            "score": score
+        }
+
+        return render_template(
+            "results.html",
+            quizz=quizz,
+            answers=user_answers,
+            score=score,
+            user=session["user"]
+        )
+
+    return render_template("quizz.html", user=session["user"], questions=quizz["questions"], quizz=quizz)
+
+
+
+@app.route("/student/quizz/<quizz_id>/result")
+def student_quizz_result(quizz_id):
+    if "user" not in session:
+        return redirect(url_for("login"))
+
+    results = session.get("last_quizz_results")
+    if not results or str(results["quizz"]["_id"]) != quizz_id:
+        flash("Aucun résultat disponible pour ce quiz.")
+        return redirect(url_for("student_home"))
+
+    return render_template(
+        "quizz_result.html",
+        user=session["user"],
+        quizz=results["quizz"],
+        answers=results["answers"]
+    )
+
+@app.route("/student/access_quizz", methods=["GET"])
+def student_access_quizz():
+    if "user" not in session:
+        return redirect(url_for("login"))
+
+    quizz_id = request.args.get("quizz_id")
+    if not quizz_id:
+        flash("Veuillez entrer un code de quiz valide.")
+        return redirect(url_for("student_home"))
+
+    return redirect(url_for("student_quizz", quizz_id=quizz_id))
 
 @app.route("/privacy")
 def privacy():

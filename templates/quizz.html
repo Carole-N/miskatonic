@@ -19,10 +19,12 @@
     </nav>
 
     <div class="quizzbox">
-        <form method="POST" action="{{ url_for('quizz') }}">
+        <!-- Formulaire pour soumettre les réponses -->
+        <form method="POST" action="{{ url_for('student_quizz', quizz_id=quizz['_id']) }}">
             {% for q in questions %}
             <div class="question">
                 <h3>{{ loop.index }}. {{ q['question'] }}</h3>
+                
                 {% for option in q['responses'] %}
                 <label>
                     <input type="checkbox" name="response_{{ q.get('_id', q.get('id')) }}" value="{{ option }}">

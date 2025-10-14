@@ -9,16 +9,15 @@
 </head>
 
 <body>
-  <h1>Bienvenue sur ton espace étudiant</h1>
-  <div class="accesquizz">
-    <h2>Accéder à un quizz : </h2>
-    <form action="post">
-      <label for="user">Numéro du quizz</label><br>
-      <input type="text" id="quizzid" name="quizzid" placeholder="**********" required><br>
-      <button type="submit">Accéder</button>
-    </form>
-  </div>
-  <p><a href="{{ url_for('logout') }}">Se déconnecter</a></p>
+  <h1>Bienvenue {{ user }}</h1>
+
+  <form action="{{ url_for('student_access_quizz') }}" method="GET">
+    <label for="quizz_id">Entrer le code du quiz :</label>
+    <input type="text" id="quizz_id" name="quizz_id" placeholder="Ex: 68ee1bef9c982e42fe9376d4" required>
+    <button type="submit">Accéder</button>
+  </form>
+
+  <p><a href="{{ url_for('student_home') }}">Retour</a></p>
 </body>
 
 </html>

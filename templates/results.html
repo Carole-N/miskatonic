@@ -16,23 +16,26 @@
     </nav>
 
     <div class="results_box">
-        <h2 id="quizzfinish">Quizz Finished!</h2>
-        <h1 class="score">Your score: {{ score }} / {{ total }}</h1>
+        <h2>Quiz Finished!</h2>
+        <p>Your score: {{ score }} / {{ quizz.questions|length }}</p>
 
-        {% for r in results %}
-        <div class="result_question">
-            <h3>{{ loop.index }}. {{ r.question['question'] }}</h3>
-            <p><strong>Your answer:</strong>
-                {% if r.selected %}{{ r.selected | join(', ') }}{% else %}No answer{% endif %}
-            </p>
-            <p><strong>Correct answer:</strong> {{ r.correct_answers | join(', ') }}</p>
-            <p>{% if r.correct %}✅ Correct{% else %}❌ Incorrect{% endif %}</p>
+        <h3>Details per question:</h3>
+        {% for q in quizz.questions %}
+        <div>
+            <p><strong>Question {{ loop.index }}:</strong> {{ q.question }}</p>
+            <p><strong>Your answer(s):</strong> {{ answers[q.get('_id', q.get('id'))]|join(', ') if answers[q.get('_id',
+                q.get('id'))] else 'None' }}</p>
+            <p><strong>Correct answer(s):</strong> {{ q.good_answers_texte|join(', ') }}</p>
+            {% if q.remark %}
+            <p><em>Remark: {{ q.remark }}</em></p>
+            {% endif %}
         </div>
         <hr>
         {% endfor %}
 
-        <a href="{{ url_for('quizz') }}"><button>Try Again</button></a>
-        <a href="{{ url_for('home') }}"><button>Back to Home</button></a>
+
+        <a href="{{ url_for('student_quizz', quizz_id=quizz['_id']) }}"><button>Try Again</button></a>
+        <a href="{{ url_for('student_home') }}"><button>Back to Home</button></a>
 
     </div>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
@@ -42,4 +45,5 @@
         <a href="{{ url_for('privacy') }}">Privacy Policy</a>
     </div>
 </footer>
+
 </html>
