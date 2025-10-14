@@ -4,3 +4,5 @@ Dockerfile
 docker-compose.yml
 db/
 dto/config.py
+scripts/__pycache__
+dto/__pycache__

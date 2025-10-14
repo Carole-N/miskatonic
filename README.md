@@ -78,7 +78,7 @@ miskatonic
  **Cloner le dépôt**
 
 ```bash
-git clone https://github.com/tonpseudo/miskatonic.git
+git clone https://github.com/CortoGyt/miskatonic.git
 cd miskatonic
 ```
  **Créer un environnement virtuel**
@@ -143,3 +143,75 @@ Les enseignants peuvent consulter les quizz archivés depuis l’interface avec 
 Les utilisateurs sont stockés dans SQLite (user_name, password_hash, role_id)
 Le hashage des mots de passe se fait via SHA256
 Gestion de session Flask pour les connexions
+```
+miskatonic
+├─ README.md
+├─ __pycache__
+│  └─ main.cpython-312.pyc
+├─ app.js
+├─ app.py
+├─ data
+│  ├─ questions.csv
+│  └─ questions.json
+├─ database
+│  ├─ __pycache__
+│  │  ├─ mongo.cpython-312.pyc
+│  │  └─ sqlite.cpython-312.pyc
+│  ├─ miskatonic_users.db
+│  ├─ mongo.py
+│  └─ sqlite.py
+├─ dto
+│  ├─ __pycache__
+│  │  ├─ config.cpython-312.pyc
+│  │  ├─ connexion.cpython-312.pyc
+│  │  └─ services.cpython-312.pyc
+│  ├─ config.py
+│  ├─ connexion.py
+│  └─ services.py
+├─ main.py
+├─ models
+│  ├─ __pycache__
+│  │  ├─ questions.cpython-312.pyc
+│  │  ├─ user.cpython-312.pyc
+│  │  ├─ user_db.cpython-312.pyc
+│  │  └─ user_dto.cpython-312.pyc
+│  ├─ mongotemplate
+│  ├─ questions.py
+│  ├─ user_db.py
+│  └─ user_dto.py
+├─ movies.json
+├─ requirements.txt
+├─ scripts
+│  ├─ __pycache__
+│  │  └─ fastapi_test.cpython-312.pyc
+│  ├─ create_db.py
+│  ├─ etl.py
+│  ├─ fastapi_test.py
+│  └─ load_data.py
+├─ static
+│  ├─ images
+│  │  ├─ bangerblazon.png
+│  │  ├─ bannieremiska.png
+│  │  ├─ favicon.ico
+│  │  ├─ miskabaniere.png
+│  │  └─ warning.png
+│  ├─ script.js
+│  └─ style.css
+├─ templates
+│  ├─ archived_quizz_detail.html
+│  ├─ archivedquizz.html
+│  ├─ form.html
+│  ├─ home.html
+│  ├─ index.html
+│  ├─ login.html
+│  ├─ privacy.html
+│  ├─ quizz.html
+│  ├─ register.html
+│  ├─ results.html
+│  ├─ student_home.html
+│  ├─ teacher_home.html
+│  ├─ teacher_quiz_preview.html
+│  └─ teacher_quiz_setup.html
+└─ text.py
+
+```
