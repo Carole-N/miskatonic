@@ -3,7 +3,6 @@ from hashlib import sha256
 import random
 import requests
 from dto.services import QuestionService, QuizzService
-import json
 
 app = Flask(__name__)
 app.secret_key = "miufdzpiugfeza"
