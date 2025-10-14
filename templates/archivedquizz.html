@@ -12,44 +12,47 @@
     <h1>Détail du quiz archivé</h1>
 
     {% if quizz %}
-        <p><strong>ID :</strong> {{ quizz._id }}</p>
-        <p><strong>Utilisateur :</strong> {{ quizz.user }}</p>
-        <p><strong>Thème :</strong> {{ quizz.subject }}</p>
+    <p><strong>ID :</strong> {{ quizz._id }}</p>
+    <p><strong>Utilisateur :</strong> {{ quizz.user }}</p>
+    <p><strong>Thème :</strong> {{ quizz.subject }}</p>
 
-        {% if quizz.questions %}
-            {% for q in quizz.questions %}
-                <div class="question">
-                    <p><strong>Question :</strong> {{ q.question }}</p>
+    {% if quizz.questions %}
+    {% for q in quizz.questions %}
+    <div class="question">
+        <p><strong>Question :</strong> {{ q.question_text.question or q.question_text }}</p>
 
-                    <p><strong>Réponses possibles :</strong></p>
-                    <ul>
-                        {% for r in q.responses %}
-                            {% if r in q.good_answers_texte %}
-                                <li class="correct">{{ r }} (✅bonne réponse)</li>
-                            {% else %}
-                                <li>{{ r }}</li>
-                            {% endif %}
-                        {% endfor %}
-                    </ul>
+        <p><strong>Réponses possibles :</strong></p>
+        <ul>
+            {% set responses = q.responses or q.question_text.responses %}
+            {% set good_answers = q.good_answers_texte or q.question_text.good_answers_texte %}
 
-                    <p><strong>Réponse sélectionnée :</strong>
-                        {% if q.selected %}
-                            <span class="selected">{{ q.selected | join(', ') }}</span>
-                        {% else %}
-                            Non sélectionnée
-                        {% endif %}
-                    </p>
-
-                    {% if q.remark %}
-                        <p class="remark">Remarque : {{ q.remark }}</p>
-                    {% endif %}
-                </div>
+            {% for r in responses %}
+            {% if r in good_answers %}
+            <li class="correct">{{ r }} (✅bonne réponse)</li>
+            {% else %}
+            <li>{{ r }}</li>
+            {% endif %}
             {% endfor %}
-        {% else %}
-            <p>Aucune question trouvée dans ce quiz.</p>
+        </ul>
+
+        <p><strong>Réponse sélectionnée :</strong>
+            {% if q.selected %}
+            <span class="selected">{{ q.selected | join(', ') }}</span>
+            {% else %}
+            Non sélectionnée
+            {% endif %}
+        </p>
+
+        {% if q.question_text.remark %}
+        <p class="remark">Remarque : {{ q.question_text.remark }}</p>
         {% endif %}
+    </div>
+    {% endfor %}
     {% else %}
-        <p>Quiz introuvable.</p>
+    <p>Aucune question trouvée dans ce quiz.</p>
+    {% endif %}
+    {% else %}
+    <p>Quiz introuvable.</p>
     {% endif %}
 
     <p><a href="{{ url_for('archived_quizz_list') }}">⬅ Retour à la liste des quizz</a></p>

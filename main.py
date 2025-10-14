@@ -1,4 +1,3 @@
-# main.py
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from dto.services import QuestionService, UserService, QuizzService
@@ -47,13 +46,15 @@ def update_question_by_id(
     remark: str | None,
 ):
     update_data = {
-        "question:": question,
+        # FIX: Clé corrigée (était 'question:')
+        "question": question, 
         "subject": subject,
         "use": use,
         "correct": correct,
         "responses": responses,
         "good_answer_texte": good_answer_texte,
-        "reamark": remark,
+        # FIX: Clé corrigée (était 'reamark')
+        "remark": remark,
     }
     modified_count = QuestionService.update_question_by_id(question_id, update_data)
     if modified_count == 0:
@@ -100,22 +101,31 @@ def login_user(user: UserModel, db: Session = Depends(get_db_sqlite)):
 
 # --- Quizz (MongoDB) ---
 
-app.get("/quizz/{quizz_id}", tags=["Quizz"])
-def get_quizz_by_id():
-    quizz = QuizzService.get_quizz_by_id()
+# FIX: Ajout du décorateur @app.get et du paramètre 'quizz_id'
+@app.get("/quizz/{quizz_id}", tags=["Quizz"])
+def get_quizz_by_id(quizz_id: str):
+    quizz = QuizzService.get_quizz_by_id(quizz_id)
     if not quizz:
         raise HTTPException(status_code=404, detail="Quizz not found")
     return quizz
 
 @app.get("/quizz", tags=["Quizz"])
-def get_all_questions():
+# FIX: Renommage de la fonction pour la rendre cohérente (était get_all_questions)
+def get_all_quizzs():
     quizzs = QuizzService.get_all_quizzs()
     print("Raw quizz:", quizzs)
     return quizzs
 
+# FIX: Correction du nom de la fonction et utilisation du service QuizzService
 @app.delete("/quizz/{quizz_id}", tags=["Quizz"])
-def delete_question_by_id(question_id: str):
-    deleted_count = QuestionService.delete_question_by_id(question_id)
+def delete_quizz_by_id(quizz_id: str):
+    deleted_count = QuizzService.delete_quizz_by_id(quizz_id)
     if deleted_count == 0:
-        return {"error": "Question not found"}
-    return {"message": "Question deleted successfully"}
+        return {"error": "Quizz not found"}
+    return {"message": "Quizz deleted successfully"}
+
+@app.get("/questions/{subject}")
+def get_questions(subject: str):
+    questions = QuestionService.get_questions_by_subject(subject)
+    # Assurez-vous que le service retourne des objets avec une méthode .dict() ou des dictionnaires standards
+    return [q.dict() for q in questions if q.responses]

@@ -9,35 +9,39 @@
 </head>
 
 <body>
-  <h1>Aperçu — {{ theme }} ({{ nb }} questions)</h1>
+  <h2>Quiz : {{ subject }}</h2>
+  <p>Total questions : {{ total }}</p>
 
-  {% for q in questions %}
-  <section class="question">
-    <h3>Q{{ loop.index }}. {{ q.question }}</h3>
-    <ul>
-      {% for r in q.responses %}
-      <li>{{ r }}</li>
-      {% endfor %}
-    </ul>
-    <!-- Astuce prof : bonne réponse -->
-    <details>
-      <summary>Voir la bonne réponse</summary>
-      <p><strong>{{ q.correct }}</strong></p>
-    </details>
-  </section>
-  {% endfor %}
+          <form method="POST" action="{{ url_for('save_quiz') }}">
+                        <input type="hidden" name="subject" value="{{ subject }}">
 
-  <p>
-    <a href="{{ url_for('teacher_quiz_setup') }}">Revenir au paramétrage</a>
-  </p>
-  <div>
-    <form action="{{ url_for('save_quiz') }}" method="POST">
-      <input type="hidden" name="subject" value="{{ subject }}">
-      <textarea name="questions" hidden>{{ questions | tojson }}</textarea>
-      <button type="submit">Enregistrer le quizz</button>
-    </form>
-    </form>
-  </div>
+            {% for q in questions %}
+            <div class="question-item">
+                                <p><strong>Question {{ loop.index }} :</strong> {{ q.question_text }}</p>
+                
+                <p><strong>Réponses (Bonnes réponses en vert) :</strong></p>
+                <ul>
+                    {% for response in q.responses %}
+                        {% if response in q.good_answers_texte %}
+                            <li class="correct-answer">✅ {{ response }}</li>
+                        {% else %}
+                            <li>{{ response }}</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+
+                {% if q.remark %}
+                    <p><em>Remarque : {{ q.remark }}</em></p>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <div class="actions">
+                <button type="submit" class="btn-save">
+                    Sauvegarder ce Quiz (Publier)
+                </button>
+            </div>
+        </form>
 </body>
 
 </html>
