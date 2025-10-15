@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 from hashlib import sha256
 import requests
 from dto.services import QuestionService, QuizzService 
-import json
+from random import sample
 
 
 app = Flask(__name__)
@@ -129,9 +129,18 @@ def teacher_quiz_setup():
 
     if request.method == "POST":
         selected_subject = request.form.get("subject")
+        nb_questions = request.form.get("nb")
 
         if not selected_subject:
             flash("Veuillez choisir un sujet.")
+            return redirect(url_for("teacher_quiz_setup"))
+        
+        try:
+            nb_questions = int(nb_questions)
+            if nb_questions <= 0:
+                raise ValueError
+        except ValueError:
+            flash("Le nombre de questions doit être un entier positif.")
             return redirect(url_for("teacher_quiz_setup"))
 
         quiz_generated = QuestionService.get_questions_by_subject(selected_subject)
@@ -141,8 +150,14 @@ def teacher_quiz_setup():
             flash(f"Aucune question trouvée pour le sujet '{selected_subject}'.")
             return redirect(url_for("teacher_quiz_setup"))
 
+        if len(quiz_generated) > nb_questions:
+            quiz_generated = sample(quiz_generated, nb_questions)
+        else:
+            flash(f"Seulement {len(quiz_generated)} questions disponibles pour ce sujet.")
+
         session["quiz_preview"] = quiz_generated
         session["quiz_subject"] = selected_subject
+        session["quiz_nb"] = nb_questions
 
         return redirect(url_for("teacher_quiz_preview"))
 
@@ -164,7 +179,6 @@ def teacher_quiz_preview():
 
     normalized_questions = []
     for q in quizz:
-        # --- Logique d'extraction robuste pour la question ---
         question_text = None
         responses = []
         good_answers = []
@@ -199,8 +213,7 @@ def teacher_quiz_preview():
         # S'assurer que le texte de la question est une chaîne et non None
         question_text = question_text or "Question manquante"
         subject_q = q.get("subject") or subject
-        
-        # --- Fin de la logique d'extraction ---
+
 
         if not responses or question_text == "Question manquante":
             print(f"[Alerte] Question incomplète ou manquante, ignorée: {q}")
@@ -214,8 +227,8 @@ def teacher_quiz_preview():
             "subject": subject_q,
             "question_id": str(q.get("_id") or q.get("id") or "")
         })
-    
-    # MODIFICATION CLÉ : On stocke la liste propre dans la session
+
+    #On stocke la liste propre dans la session
     session['quiz_to_save'] = normalized_questions
 
     return render_template(
@@ -231,16 +244,13 @@ def save_quiz():
         flash("Aucun utilisateur connecté.")
         return redirect(url_for("teacher_quiz_setup"))
 
-    # MODIFICATION CLÉ : On récupère les données fiables de la session
     questions_preview = session.pop('quiz_to_save', None)
     subject = session.get("quiz_subject") # On peut aussi le récupérer de la session
 
-    # Vérification de sécurité
     if not questions_preview or not subject:
         flash("Erreur : les données du quiz sont introuvables dans la session. Veuillez réessayer.")
         return redirect(url_for("teacher_quiz_setup"))
 
-    # La structure est déjà propre, il suffit de l'adapter pour la sauvegarde
     questions_to_save = []
     for q in questions_preview:
         questions_to_save.append({
@@ -254,7 +264,6 @@ def save_quiz():
             "correct_answers": q.get("good_answers_texte", []) # Assure la cohérence
         })
 
-    # Sauvegarde dans Mongo (BLOC TRY/EXCEPT pour la DB)
     try:
         QuizzService.save_quizz_result(
             user=session["user"],
