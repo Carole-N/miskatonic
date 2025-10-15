@@ -316,7 +316,7 @@ def student_quizz(quizz_id):
         user_answers = {}
         score = 0
         for q in quizz["questions"]:
-            q_id = str(q.get("question_id") or q.get("_id", q.get("id")))
+            q_id = str(q["question_id"])
             selected = request.form.getlist(f"response_{q_id}")
             user_answers[q_id] = selected
 
@@ -329,7 +329,7 @@ def student_quizz(quizz_id):
             "answers": user_answers,
             "score": score
         }
-
+        print("DEBUG user_answers:", session.get("last_quizz_results") or user_answers)
         return render_template(
             "results.html",
             quizz=quizz,

@@ -9,6 +9,10 @@
 </head>
 
 <body>
+    <nav>
+        <p>Welcome, {{ user }} | <a href="{{ url_for('home') }}">Home</a> | <a href="{{ url_for('logout') }}">Logout</a>
+        </p>
+    </nav>
     <h1>Quiz archivés</h1>
     {% with messages = get_flashed_messages() %}
     {% if messages %}
@@ -30,12 +34,12 @@
         <li>Aucun quiz trouvé.</li>
         {% endfor %}
     </ul>
-
+    <a id="btnretour" href="{{ url_for('teacher_quiz_setup') }}"><button>Retour</button></a>
 </body>
 <footer>
     <div>
         <a href="{{ url_for('privacy') }}">Privacy Policy</a>
-        <a href="{{ url_for('teacher_quiz_setup') }}">Retour</a>
+
     </div>
 </footer>
 

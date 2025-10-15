@@ -1,44 +1,55 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" />
   <title>Paramétrage du quiz (prof)</title>
 </head>
-<body>
-  <h1>Paramétrage du quiz</h1>
 
-  {% with messages = get_flashed_messages() %}
-  {% if messages %}
+<body>
+  <nav>
+    <p>Welcome, {{ user }} | <a href="{{ url_for('home') }}">Home</a> | <a href="{{ url_for('logout') }}">Logout</a>
+    </p>
+  </nav>
+  <h1>Paramétrage du quiz</h1>
+  <div class="teacherboate">
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
     <div class="flash">
       {% for m in messages %}<p>{{ m }}</p>{% endfor %}
     </div>
-  {% endif %}
-  {% endwith %}
+    {% endif %}
+    {% endwith %}
 
-  <form action="{{ url_for('teacher_quiz_setup') }}" method="POST">
-    <label for="subject">Thème :</label>
-    <select id="subject" name="subject" required>
-      {% if subjects %}
+    <form action="{{ url_for('teacher_quiz_setup') }}" method="POST">
+      <label for="subject">Thème :</label>
+      <select id="subject" name="subject" required>
+        {% if subjects %}
         {% for s in subjects %}
-          <option value="{{ s }}" {% if s == selected_theme %}selected{% endif %}>{{ s }}</option>
+        <option value="{{ s }}" {% if s==selected_theme %}selected{% endif %}>{{ s }}</option>
         {% endfor %}
-      {% else %}
+        {% else %}
         <option value="" disabled selected>— Aucun thème détecté —</option>
-      {% endif %}
-    </select>
+        {% endif %}
+      </select>
 
-    <label for="nb">Nombre de questions :</label>
-    <input id="nb" name="nb" type="number" min="1" max="50" value="5" required>
-
-    <button type="submit">Générer un aperçu</button>
-  </form>
-
-  <div>
-    <a href="{{ url_for('archived_quizz_list') }}" class="button">Archive des quizzs</a>
+      <label for="nb">Nombre de questions :</label>
+      <input id="nb" name="nb" type="number" min="1" max="50" value="5" required>
+      <br>
+      <button id="btncenter" type="submit">Générer un aperçu</button>
+    </form>
   </div>
-
-  <p><a href="{{ url_for('teacher_home') }}">Retour à l’espace enseignant</a></p>
+  <div id="teacherarchive">
+    <a href="{{ url_for('archived_quizz_list') }}"><button>Archive des quizzs</button></a>
+    <a href="{{ url_for('teacher_home') }}"><button>Retour à l’espace enseignant</button></button></a>
+  </div>
 </body>
+<footer>
+  <div>
+    <a href="{{ url_for('privacy') }}">Privacy Policy</a>
+  </div>
+</footer>
+
 </html>

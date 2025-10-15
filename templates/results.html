@@ -22,9 +22,10 @@
         <h3>Details per question:</h3>
         {% for q in quizz.questions %}
         <div>
-            <p><strong>Question {{ loop.index }}:</strong> {{ q.question }}</p>
-            <p><strong>Your answer(s):</strong> {{ answers[q.get('_id', q.get('id'))]|join(', ') if answers[q.get('_id',
-                q.get('id'))] else 'None' }}</p>
+            <p><strong>Question {{ loop.index }}:</strong> {{ q.question_text }}</p>
+            <p><strong>Your answer(s):</strong>
+                {{ answers[q.get('question_id')]|join(', ') if answers[q.get('question_id')] else 'None' }}
+            </p>
             <p><strong>Correct answer(s):</strong> {{ q.good_answers_texte|join(', ') }}</p>
             {% if q.remark %}
             <p><em>Remark: {{ q.remark }}</em></p>
@@ -32,7 +33,6 @@
         </div>
         <hr>
         {% endfor %}
-
 
         <a href="{{ url_for('student_quizz', quizz_id=quizz['_id']) }}"><button>Try Again</button></a>
         <a href="{{ url_for('student_home') }}"><button>Back to Home</button></a>
