@@ -9,38 +9,47 @@
 </head>
 
 <body>
+  <nav>
+    <p>Welcome, {{ user }} | <a href="{{ url_for('home') }}">Home</a> | <a href="{{ url_for('logout') }}">Logout</a>
+    </p>
+  </nav>
   <h1>Paramétrage du quiz</h1>
-  {% with messages = get_flashed_messages() %}
-  {% if messages %}
-  <div class="flash">
-    {% for m in messages %}<p>{{ m }}</p>{% endfor %}
+  <div class="teacherboate">
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="flash">
+      {% for m in messages %}<p>{{ m }}</p>{% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <form action="{{ url_for('teacher_quiz_setup') }}" method="POST">
+      <label for="subject">Thème :</label>
+      <select id="subject" name="subject" required>
+        {% if subjects %}
+        {% for s in subjects %}
+        <option value="{{ s }}" {% if s==selected_theme %}selected{% endif %}>{{ s }}</option>
+        {% endfor %}
+        {% else %}
+        <option value="" disabled selected>— Aucun thème détecté —</option>
+        {% endif %}
+      </select>
+
+      <label for="nb">Nombre de questions :</label>
+      <input id="nb" name="nb" type="number" min="1" max="50" value="5" required>
+      <br>
+      <button id="btncenter" type="submit">Générer un aperçu</button>
+    </form>
   </div>
-  {% endif %}
-  {% endwith %}
-
-  <form action="{{ url_for('teacher_quiz_preview') }}" method="GET">
-    <label for="theme">Thème :</label>
-    <select id="theme" name="theme" required>
-      {% if subjects and subjects|length > 0 %}
-      {% for s in subjects %}
-      <option value="{{ s }}" {% if request.args.get('theme')==s %}selected{% endif %}>{{ s }}</option>
-      {% endfor %}
-      {% else %}
-      <option value="" disabled selected>— Aucun thème détecté —</option>
-      {% endif %}
-    </select>
-
-
-    <label for="nb">Nombre de questions :</label>
-    <input id="nb" name="nb" type="number" min="1" max="50" value="5" required>
-
-    <button type="submit">Générer (aperçu à venir)</button>
-  </form>
-  <div>
-    <a href="{{ url_for('archived_quizz_list') }}" class="button">Archive des quizzs</a>
+  <div id="teacherarchive">
+    <a href="{{ url_for('archived_quizz_list') }}"><button>Archive des quizzs</button></a>
+    <a href="{{ url_for('teacher_home') }}"><button>Retour à l’espace enseignant</button></button></a>
   </div>
-
-  <p><a href="{{ url_for('teacher_home') }}">Retour à l'espace enseignant</a></p>
 </body>
+<footer>
+  <div>
+    <a href="{{ url_for('privacy') }}">Privacy Policy</a>
+  </div>
+</footer>
 
 </html>

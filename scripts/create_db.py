@@ -7,7 +7,7 @@ def create_db():
     try: 
         # Connexion (ou création si elle n'existe pas) à une base de données SQLite
         # Le fichier sera enregistré à l'emplacement ./data/Miskatonik_users.db
-        con = sqlite3.connect("../data/miskatonic_users.db")
+        con = sqlite3.connect("../database/miskatonic_users.db")
         cur = con.cursor()  # Création d'un curseur pour exécuter les requêtes SQL
     except Exception as e:
         # Gestion d'erreur si la connexion échoue

@@ -9,15 +9,23 @@
 </head>
 
 <body>
-  <h1>Bienvenue {{ user }}</h1>
+  <nav>
+    <p>Welcome, {{ user }} | <a href="{{ url_for('home') }}">Home</a> | <a href="{{ url_for('logout') }}">Logout</a>
+    </p>
+  </nav>
 
-  <form action="{{ url_for('student_access_quizz') }}" method="GET">
+  <form action="{{ url_for('student_access_quizz') }}" method="GET" class="accesquizz">
     <label for="quizz_id">Entrer le code du quiz :</label>
     <input type="text" id="quizz_id" name="quizz_id" placeholder="Ex: 68ee1bef9c982e42fe9376d4" required>
     <button type="submit">Accéder</button>
   </form>
 
-  <p><a href="{{ url_for('student_home') }}">Retour</a></p>
+  <p><a href="{{ url_for('login') }}"><button class="button">Retour</button></a></p>
 </body>
+<footer>
+  <div>
+    <a href="{{ url_for('privacy') }}">Privacy Policy</a>
+  </div>
+</footer>
 
 </html>

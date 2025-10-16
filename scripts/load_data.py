@@ -10,7 +10,7 @@ from getpass import getpass
 load_dotenv()
 
 # Chemin vers la base de données SQLite
-DB_PATH = "./data/miskatonic_users.db"
+DB_PATH = "./database/miskatonic_users.db"
 
 def admin_login():
     """

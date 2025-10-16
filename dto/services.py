@@ -1,4 +1,3 @@
-# dto/services.py
 from bson import ObjectId
 from database.mongo import MongoConnection
 from models.user_db import UserDB
@@ -10,6 +9,7 @@ from models.user_dto import UserModel
 class QuestionService:
     @staticmethod
     def get_collection():
+        # Connecte à la collection de questions (collection par défaut)
         return MongoConnection.connect()
 
     @classmethod
@@ -20,24 +20,15 @@ class QuestionService:
     @classmethod
     def get_all_questions(cls):
         questions = list(cls.get_collection().find())
-        print("Questions récupérées dans le service:", questions)
+        # Convertit ObjectId en str pour l'envoi via l'API
         for q in questions:
             q["_id"] = str(q["_id"])
         return questions
-
+    
     @classmethod
-    def get_question_by_id(cls, question_id: str):
-        q = cls.get_collection().find_one({"_id": ObjectId(question_id)})
-        if q:
-            q["_id"] = str(q["_id"])
-        return q
-
-    @classmethod
-    def get_quizz_by_id(cls, quizz_id: str):
-        q = cls.get_collection().find_one({"_id": ObjectId(quizz_id)})
-        if q:
-            q["_id"] = str(q["_id"])
-        return q
+    def get_question_by_id(cls, question_id):
+        collection = cls.get_collection()
+        return collection.find_one({"_id": ObjectId(question_id)})
 
     @classmethod
     def update_question_by_id(cls, question_id: str, update_data: dict):
@@ -52,33 +43,12 @@ class QuestionService:
         return result.deleted_count
 
     @classmethod
-    def save_quizz_result(cls, user: str, subject: str, questions: list):
-        collection = cls.get_collection_quizz()
-
-        quizz_doc = {
-            "user": user,
-            "subject": subject,
-            "questions": [
-                {
-                    "question_id": str(q.get("_id", q.get("id"))),
-                    "question_text": {
-                        "question": q.get("question"),
-                        "responses": q.get("responses", []),
-                        "good_answers_texte": q.get("good_answers_texte", []),
-                        "remark": q.get("remark"),
-                        "subject": q.get("subject"),
-                    },
-                    "selected": q.get("selected", []),
-                    "correct_answers": q.get("good_answers_texte", []),
-                }
-                for q in questions
-            ],
-        }
-
-        print("DEBUG insertion quiz:", quizz_doc)  # Pour vérifier dans la console
-        collection.insert_one(quizz_doc)
-
-
+    def get_questions_by_subject(cls, subject: str):
+        # Utilise la méthode existante pour filtrer les questions
+        all_questions = cls.get_all_questions()
+        filtered = [q for q in all_questions if q.get("subject") == subject]
+        return filtered
+        
 # ---- Service SQLite (Utilisateurs) ----
 class UserService:
     @staticmethod
@@ -118,9 +88,11 @@ class UserService:
         return user
 
 
+# ---- Service MongoDB (Quizz) ----
 class QuizzService:
     @classmethod
     def get_collection_quizz(cls):
+        # Connecte à la collection dédiée aux quizz (collection 2)
         return MongoConnection.connect_coll2()
 
     @classmethod
@@ -133,6 +105,7 @@ class QuizzService:
 
     @classmethod
     def get_quizz_by_id(cls, quizz_id: str):
+        # Récupère un quizz spécifique par son ID
         q = cls.get_collection_quizz().find_one({"_id": ObjectId(quizz_id)})
         if q:
             q["_id"] = str(q["_id"])
@@ -140,6 +113,7 @@ class QuizzService:
 
     @classmethod
     def get_subjects_from_mongo(cls):
+        # Récupère tous les sujets existants dans la base de questions
         questions = QuestionService.get_all_questions()
         subjects = sorted(
             set(q.get("subject", "").strip() for q in questions if q.get("subject"))
@@ -148,27 +122,18 @@ class QuizzService:
 
     @classmethod
     def save_quizz_result(cls, user: str, subject: str, questions: list):
+        # Enregistre le quiz. La liste 'questions' est supposée déjà normalisée par Flask.
         collection = cls.get_collection_quizz()
+        
+        if not questions:
+            print("[ALERTE SERVICE] Tentative d'enregistrement d'un quiz vide.")
+            return
+
         quizz_doc = {
             "user": user,
             "subject": subject,
-            "questions": [
-                {
-                    "question_id": str(q.get("_id", q.get("id"))),
-                    "question_text": {
-                        "question": q.get("question"),
-                        "responses": q.get("responses", []),
-                        "good_answers_texte": q.get("good_answers_texte", []),
-                        "remark": q.get("remark"),
-                        "subject": q.get("subject"),
-                    },
-                    "selected": q.get("selected", []),
-                    "correct_answers": q.get("good_answers_texte", []),
-                }
-                for q in questions
-            ]
+            "questions": questions
         }
-        print("DEBUG insertion quiz:", quizz_doc)
         collection.insert_one(quizz_doc)
         
     @classmethod

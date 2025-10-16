@@ -1,10 +1,10 @@
-# main.py
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, Body
 from sqlalchemy.orm import Session
 from dto.services import QuestionService, UserService, QuizzService
 from database.sqlite import get_db_sqlite
 from models.questions import QuestionModel
-from models.user_dto import UserModel
+from models.user_dto import UserModel, UserUpdateModel
+
 
 app = FastAPI(title="Quiz API")
 
@@ -47,13 +47,15 @@ def update_question_by_id(
     remark: str | None,
 ):
     update_data = {
-        "question:": question,
+        # FIX: Clé corrigée (était 'question:')
+        "question": question, 
         "subject": subject,
         "use": use,
         "correct": correct,
         "responses": responses,
         "good_answer_texte": good_answer_texte,
-        "reamark": remark,
+        # FIX: Clé corrigée (était 'reamark')
+        "remark": remark,
     }
     modified_count = QuestionService.update_question_by_id(question_id, update_data)
     if modified_count == 0:
@@ -97,25 +99,44 @@ def login_user(user: UserModel, db: Session = Depends(get_db_sqlite)):
         raise HTTPException(status_code=401, detail="Invalid username or password")
     return {"message": "Login successful"}
 
+@app.put("/users/{user_id}", tags=["Users"])
+def update_user(
+    user_id: int,
+    user_data: UserUpdateModel,
+    db: Session = Depends(get_db_sqlite)
+):
+    updated_user = UserService.update_user(db, user_id, user_data.model_dump(exclude_unset=True))
+    if not updated_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return {
+        "message": "User successfully updated",
+        "user": UserModel.model_validate(updated_user)
+    }
+
 
 # --- Quizz (MongoDB) ---
 
-app.get("/quizz/{quizz_id}", tags=["Quizz"])
-def get_quizz_by_id():
-    quizz = QuizzService.get_quizz_by_id()
+@app.get("/quizz/{quizz_id}", tags=["Quizz"])
+def get_quizz_by_id(quizz_id: str):
+    quizz = QuizzService.get_quizz_by_id(quizz_id)
     if not quizz:
         raise HTTPException(status_code=404, detail="Quizz not found")
     return quizz
 
 @app.get("/quizz", tags=["Quizz"])
-def get_all_questions():
+def get_all_quizzs():
     quizzs = QuizzService.get_all_quizzs()
     print("Raw quizz:", quizzs)
     return quizzs
 
 @app.delete("/quizz/{quizz_id}", tags=["Quizz"])
-def delete_question_by_id(question_id: str):
-    deleted_count = QuestionService.delete_question_by_id(question_id)
+def delete_quizz_by_id(quizz_id: str):
+    deleted_count = QuizzService.delete_quizz_by_id(quizz_id)
     if deleted_count == 0:
-        return {"error": "Question not found"}
-    return {"message": "Question deleted successfully"}
+        return {"error": "Quizz not found"}
+    return {"message": "Quizz deleted successfully"}
+
+@app.get("/questions/{subject}")
+def get_questions(subject: str):
+    questions = QuestionService.get_questions_by_subject(subject)
+    return [q.dict() for q in questions if q.responses]

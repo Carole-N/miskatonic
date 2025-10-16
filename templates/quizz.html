@@ -17,25 +17,24 @@
             <a href="{{ url_for('logout') }}">Logout</a>
         </p>
     </nav>
+    <!-- Formulaire pour soumettre les réponses -->
+    <form method="POST" action="{{ url_for('student_quizz', quizz_id=quizz['_id']) }}">
+        {% for q in questions %}
+        <div class="question">
+            <h3>{{ loop.index }}. {{ q['question_text'] }}</h3>
 
-    <div class="quizzbox">
-        <!-- Formulaire pour soumettre les réponses -->
-        <form method="POST" action="{{ url_for('student_quizz', quizz_id=quizz['_id']) }}">
-            {% for q in questions %}
-            <div class="question">
-                <h3>{{ loop.index }}. {{ q['question'] }}</h3>
-                
-                {% for option in q['responses'] %}
-                <label>
-                    <input type="checkbox" name="response_{{ q.get('_id', q.get('id')) }}" value="{{ option }}">
-                    {{ option }}
-                </label><br>
-                {% endfor %}
-            </div>
-            <hr>
+            {% for option in q['responses'] %}
+            <label>
+                <input type="checkbox" name="response_{{ q['question_id'] }}" value="{{ option }}">
+                {{ option }}
+            </label><br>
             {% endfor %}
-            <button type="submit">Submit All Answers</button>
-        </form>
+        </div>
+        <hr>
+        {% endfor %}
+        <button type="submit">Submit All Answers</button>
+
+    </form>
     </div>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>

@@ -9,13 +9,18 @@
 </head>
 
 <body>
-  <h1>Espace Enseignant</h1>
-  <p><a href="{{ url_for('teacher_quiz_setup') }}"><button>Créer un quiz</button></a></p>
-  <div>
-    <a href="{{ url_for('archived_quizz_list') }}" class="button">Archive des quizzs</a>
+  <nav>
+    <p>Welcome, {{ user }} | <a href="{{ url_for('home') }}">Home</a> | <a href="{{ url_for('logout') }}">Logout</a>
+    </p>
+  </nav>
+  <div class="homebox">
+    <h1>Espace Enseignant</h1>
+    <p><a href="{{ url_for('teacher_quiz_setup') }}"><button>Créer un quiz</button></a></p>
+    <div>
+      <a href="{{ url_for('archived_quizz_list') }}"><button>Archive des quizzs</button></a>
+    </div>
+    <p><a href="{{ url_for('logout') }}"><button>Déconnexion</button></a></p>
   </div>
-  <p><a href="{{ url_for('home') }}"><button>Retour</button></a></p>
-  <p><a href="{{ url_for('logout') }}">Déconnexion</a></p>
 </body>
 
 </html>

@@ -5,7 +5,7 @@
 }
 
 body {
-  background: linear-gradient(-45deg, #1cdbd9 40%, #d335de47 50%, #1cdbd9 60%);
+  background: linear-gradient(-45deg, #73fffd 40%, #d335de47 50%, #8dfffd 60%);
   background-size: 400%;
   background-position-x: 100%;
   animation: shimmer 10s infinite linear;
@@ -81,9 +81,15 @@ h1 {
 }
 
 footer {
-  background-color: red;
+  background: rgba(202, 251, 255, 0.5);
   border-radius: 2em;
+  box-shadow: 0px 0px 10px #232931;
+  display: flex;
+  justify-content: space-around;
   margin: 1em;
+  margin-left: 30%;
+  margin-right: 30%;
+  padding: 1em;
   text-align: center;
 }
 
@@ -91,10 +97,12 @@ nav {
   background-color:rgba(255, 255, 255, 0.3);;
   border-radius: 5em;
   display: flex;
-  justify-content: space-around;
+  flex-wrap: wrap;
+  justify-content: center;
   margin: 0 auto;
   margin-left: 20%;
   margin-right: 20%;
+  padding: 0.5em;
   position: sticky;
 }
 
@@ -144,6 +152,7 @@ nav>ul li:hover .under {
 .question {
   background-color:rgba(255, 255, 255, 0.3);
   border-radius: 1em;
+  box-shadow: 0px 0px 10px #232931;
 }
 .boate{
   background-color: brown;
@@ -204,5 +213,95 @@ nav>ul li:hover .under {
   margin-left: 10%;
   margin-right: 10%;
   padding: 2em;
+  text-align: center;
+}
+
+.button {
+  text-align: center;
+  margin-left: 45%;
+  margin-right: 45%;
+}
+
+#btnretour{
+  margin-left: 45%;
+  margin-right: 45%;
+}
+
+.accesquizz {
+  display: flex;
+  justify-content: center;
+  margin-left: 30%;
+  margin-right: 30%;
+  flex-wrap: wrap;
+}
+
+.homebox {
+  background: rgba(202, 251, 255, 0.5);
+  border: #1a1a1a;
+  border-radius: 2em;
+  box-shadow:5px 5px 15px 3px #1a1a1a;
+  margin: 2em;
+  margin-left: 10%;
+  margin-right: 10%;
+  padding: 2em;
+  text-align: center;
+}
+
+ul, ol, li{
+  background: rgba(202, 251, 255, 0.5);
+  border: #1a1a1a;
+  border-radius: 2em;
+  box-shadow:5px 5px 15px 3px #1a1a1a;
+  list-style-type: none;
+  margin: 2em;
+  margin-left: 10%;
+  margin-right: 10%;
+  padding: 0.5em;
+  text-align: center;
+}
+
+.teacherboate{
+  background: rgba(202, 251, 255, 0.5);
+  border: #1a1a1a;
+  border-radius: 2em;
+  box-shadow:5px 5px 15px 3px #1a1a1a;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 1em;
+  margin-left: 10%;
+  margin-right: 10%;
+  padding: 1em;
+
+}
+
+#btncenter {
+  margin-left:35% ;
+  margin-right: 35%;
+}
+
+#teacherarchive{
+  margin-left: 33%;
+  margin-right: 30%;
+}
+
+.boatearchivedquiz {
+  margin-left: 20%;
+  margin-right: 20%;
+  text-align: center;
+}
+
+#boateckiquizz {
+  background: rgba(202, 251, 255, 0.5);
+  border: #1a1a1a;
+  border-radius: 2em;
+  box-shadow:5px 5px 15px 3px #1a1a1a;
+  margin: 1em;
+  margin-left: 10%;
+  margin-right: 10%;
+  padding: 1em;
+}
+
+#quizfinishcenter{
   text-align: center;
 }

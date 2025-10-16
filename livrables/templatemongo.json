@@ -1,0 +1,36 @@
+Questions.
+
+{
+  "_id": {
+    "$oid": "str"
+  },
+  "id": "int",
+  "question": "str",
+  "subject": "str",
+  "use": "str",
+  "correct": "list[str]",
+  "responses": "list[str]",
+  "good_answers_texte": "list[str]",
+  "remark": "str | Optional"
+}
+
+Quiz.
+{
+  "_id": {
+    "$oid": "str"
+  },
+  "user": "str",
+  "subject": "str",
+  "questions": [
+    {
+      "question_id": "str",
+      "question_text": "str",
+      "responses": "list[str]",
+      "good_answers_texte": "list[str]",
+      "remark": "str | optional",
+      "subject": "str",
+      "selected": [],
+      "correct_answers": "list[str]"
+    },
+  ]
+}
