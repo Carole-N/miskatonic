@@ -1,9 +1,10 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, Body
 from sqlalchemy.orm import Session
 from dto.services import QuestionService, UserService, QuizzService
 from database.sqlite import get_db_sqlite
 from models.questions import QuestionModel
-from models.user_dto import UserModel
+from models.user_dto import UserModel, UserUpdateModel
+
 
 app = FastAPI(title="Quiz API")
 
@@ -98,10 +99,23 @@ def login_user(user: UserModel, db: Session = Depends(get_db_sqlite)):
         raise HTTPException(status_code=401, detail="Invalid username or password")
     return {"message": "Login successful"}
 
+@app.put("/users/{user_id}", tags=["Users"])
+def update_user(
+    user_id: int,
+    user_data: UserUpdateModel,
+    db: Session = Depends(get_db_sqlite)
+):
+    updated_user = UserService.update_user(db, user_id, user_data.model_dump(exclude_unset=True))
+    if not updated_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return {
+        "message": "User successfully updated",
+        "user": UserModel.model_validate(updated_user)
+    }
+
 
 # --- Quizz (MongoDB) ---
 
-# FIX: Ajout du décorateur @app.get et du paramètre 'quizz_id'
 @app.get("/quizz/{quizz_id}", tags=["Quizz"])
 def get_quizz_by_id(quizz_id: str):
     quizz = QuizzService.get_quizz_by_id(quizz_id)
@@ -110,13 +124,11 @@ def get_quizz_by_id(quizz_id: str):
     return quizz
 
 @app.get("/quizz", tags=["Quizz"])
-# FIX: Renommage de la fonction pour la rendre cohérente (était get_all_questions)
 def get_all_quizzs():
     quizzs = QuizzService.get_all_quizzs()
     print("Raw quizz:", quizzs)
     return quizzs
 
-# FIX: Correction du nom de la fonction et utilisation du service QuizzService
 @app.delete("/quizz/{quizz_id}", tags=["Quizz"])
 def delete_quizz_by_id(quizz_id: str):
     deleted_count = QuizzService.delete_quizz_by_id(quizz_id)
@@ -127,5 +139,4 @@ def delete_quizz_by_id(quizz_id: str):
 @app.get("/questions/{subject}")
 def get_questions(subject: str):
     questions = QuestionService.get_questions_by_subject(subject)
-    # Assurez-vous que le service retourne des objets avec une méthode .dict() ou des dictionnaires standards
     return [q.dict() for q in questions if q.responses]

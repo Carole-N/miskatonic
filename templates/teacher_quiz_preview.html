@@ -2,36 +2,37 @@
 <html lang="fr">
 
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" />
-  <title>Aperçu du quiz</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" />
+    <title>Aperçu du quiz</title>
 </head>
 
 <body>
-  <h2>Quiz : {{ subject }}</h2>
-  <p>Total questions : {{ total }}</p>
+    <div id="boateckiquizz">
+        <h2>Quiz : {{ subject }}</h2>
+        <p>Total questions : {{ total }}</p>
 
-          <form method="POST" action="{{ url_for('save_quiz') }}">
-                        <input type="hidden" name="subject" value="{{ subject }}">
+        <form method="POST" action="{{ url_for('save_quiz') }}">
+            <input type="hidden" name="subject" value="{{ subject }}">
 
             {% for q in questions %}
             <div class="question-item">
-                                <p><strong>Question {{ loop.index }} :</strong> {{ q.question_text }}</p>
-                
+                <p><strong>Question {{ loop.index }} :</strong> {{ q.question_text }}</p>
+
                 <p><strong>Réponses (Bonnes réponses en vert) :</strong></p>
                 <ul>
                     {% for response in q.responses %}
-                        {% if response in q.good_answers_texte %}
-                            <li class="correct-answer">✅ {{ response }}</li>
-                        {% else %}
-                            <li>{{ response }}</li>
-                        {% endif %}
+                    {% if response in q.good_answers_texte %}
+                    <li class="correct-answer">✅ {{ response }}</li>
+                    {% else %}
+                    <li>{{ response }}</li>
+                    {% endif %}
                     {% endfor %}
                 </ul>
 
                 {% if q.remark %}
-                    <p><em>Remarque : {{ q.remark }}</em></p>
+                <p><em>Remarque : {{ q.remark }}</em></p>
                 {% endif %}
             </div>
             {% endfor %}
@@ -42,6 +43,7 @@
                 </button>
             </div>
         </form>
+    </div>
 </body>
 
 </html>

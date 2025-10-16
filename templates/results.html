@@ -16,23 +16,44 @@
     </nav>
 
     <div class="results_box">
-        <h2>Quiz Finished!</h2>
-        <p>Your score: {{ score }} / {{ quizz.questions|length }}</p>
+        <h2 id="quizfinishcenter">Quiz Finished!</h2>
+        <h1>Your score: {{ score }} / {{ quizz.questions|length }}</h1>
 
-        <h3>Details per question:</h3>
-        {% for q in quizz.questions %}
-        <div>
-            <p><strong>Question {{ loop.index }}:</strong> {{ q.question_text }}</p>
-            <p><strong>Your answer(s):</strong>
-                {{ answers[q.get('question_id')]|join(', ') if answers[q.get('question_id')] else 'None' }}
+        <h3 id="quizfinishcenter">Details per question:</h3>
+        {% for q in quizz['questions'] %}
+        <div class="question-result">
+            <p><strong>Question {{ loop.index }}:</strong> {{ q['question_text'] }}</p>
+
+            {% set qkey = q.get('question_id') %}
+            {% set user_ans = answers.get(qkey) or [] %}
+            {% set correct_ans = q.get('good_answers_texte', []) %}
+
+            {# Vérifie si toutes les réponses de l'utilisateur sont dans les bonnes réponses ET inversement #}
+            {% set is_correct = (user_ans|sort == correct_ans|sort) %}
+
+            <p>
+                <strong>Your answer(s):</strong>
+                {% if user_ans %}
+                {{ user_ans | join(', ') }}
+                {% if is_correct %}
+                <span style="color: green; font-size: 1.2em;">✅</span>
+                {% else %}
+                <span style="color: red; font-size: 1.2em;">❌</span>
+                {% endif %}
+                {% else %}
+                None <span style="color: red; font-size: 1.2em;">❌</span>
+                {% endif %}
             </p>
-            <p><strong>Correct answer(s):</strong> {{ q.good_answers_texte|join(', ') }}</p>
-            {% if q.remark %}
-            <p><em>Remark: {{ q.remark }}</em></p>
+
+            <p><strong>Correct answer(s):</strong> {{ correct_ans | join(', ') }}</p>
+
+            {% if q.get('remark') %}
+            <p><em>Remark: {{ q['remark'] }}</em></p>
             {% endif %}
         </div>
         <hr>
         {% endfor %}
+
 
         <a href="{{ url_for('student_quizz', quizz_id=quizz['_id']) }}"><button>Try Again</button></a>
         <a href="{{ url_for('student_home') }}"><button>Back to Home</button></a>
