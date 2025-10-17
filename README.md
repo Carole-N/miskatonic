@@ -109,7 +109,7 @@ miskatonic
  **Cloner le dépôt**
 
 ```bash
-git clone https://github.com/CortoGyt/miskatonic.git
+git clone https://github.com/Carole-N/miskatonic.git
 cd miskatonic
 ```
  **Créer un environnement virtuel**
@@ -174,3 +174,12 @@ Les enseignants peuvent consulter les quizz archivés depuis l’interface avec 
 Les utilisateurs sont stockés dans SQLite (user_name, password_hash, role_id)
 Le hashage des mots de passe se fait via SHA256
 Gestion de session Flask pour les connexions
+
+### Informations
+
+- Ce dépôt correspond à **mon fork personnel** du projet *Miskatonic University – Générateur de quiz*, réalisé initialement en binôme avec **CortoGyt**.  
+- **Branche principale :** `main` — synchronisation du fork (branche `dev`) avec la branche `main` finale du projet, nettoyage du dépôt et mise à jour du \`.gitignore\`.  
+- **Version du rendu :** finale (alignée sur \`upstream/main\`)  
+- **Date :** Octobre 2025  
+- **Auteur du fork :** [Carole-N](https://github.com/Carole-N)
+EOF
