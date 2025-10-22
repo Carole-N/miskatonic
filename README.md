@@ -178,8 +178,16 @@ Gestion de session Flask pour les connexions
 ### Informations
 
 - Ce dépôt correspond à **mon fork personnel** du projet *Miskatonic University – Générateur de quiz*, réalisé initialement en binôme avec **CortoGyt**.  
-- **Branche principale :** `main` — synchronisation du fork (branche `dev`) avec la branche `main` finale du projet, nettoyage du dépôt et mise à jour du \`.gitignore\`.  
+- **Branche principale :** `main` — dépôt nettoyé, et mise à jour du \`.gitignore\`.  
 - **Version du rendu :** finale (alignée sur \`upstream/main\`)  
 - **Date :** Octobre 2025  
-- **Auteur du fork :** [Carole-N](https://github.com/Carole-N)
-EOF
+- **Auteure du fork :** [Carole-N](https://github.com/Carole-N)
+
+### Livrables
+
+- OpenAPI : [`livrables/openapi.json`](livrables/openapi.json) – aperçu : [`redoc-static.html`](livrables/redoc-static.html)
+- Template MongoDB : [`livrables/template_mongo.json`](livrables/template_mongo.json)
+- MCD SQLite : [`livrables/sqlite3.drawio.png`](livrables/sqlite3.drawio.png)
+- User Stories : [`livrables/user_stories_miskatonic.pdf`](livrables/user_stories_miskatonic.pdf)
+- Présentation (PDF) : [`livrables/projet_miskatonic_presentation.pdf`](livrables/projet_miskatonic_presentation.pdf)
+- Présentation (PPTX — option) : [`livrables/projet_miskatonic_presentation-avec-videos.pptx`](livrables/projet_miskatonic_presentation-avec-videos.pptx)
